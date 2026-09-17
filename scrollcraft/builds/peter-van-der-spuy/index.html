@@ -1,0 +1,753 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Peter van der Spuy. Pilot, racer, adventurer.</title>
+<meta name="description" content="One of the world's most experienced Gulfstream captains, a lifelong Porsche racer, and the man who took a 911 into the African bush.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%23ede4d4'/><path d='M6 21 L16 9 L26 21' stroke='%23aa3007' stroke-width='2.5' fill='none'/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="scrollcraft.css">
+<style>
+  /* ============ theme: cream ground, dark highlight blocks, rust accent ============ */
+  :root {
+    --sc-canvas:     #ede4d4;
+    --sc-surface:    #e3d8c4;
+    --sc-ink:        #1c1712;
+    --sc-ink-soft:   #5f564a;
+    --sc-accent:     #aa3007;
+    --sc-accent-ink: #fbf6ec;
+    --sc-font-display: "Archivo", system-ui, sans-serif;
+    --sc-font-text:    "Archivo", system-ui, sans-serif;
+
+    --pv-cream:    #ede4d4;
+    --pv-cream-dp: #e3d8c4;
+    --pv-dark:     #17120e;
+    --pv-dark-2:   #221b15;
+    --pv-rust:     #aa3007;
+    --pv-rust-ink: #7f2204;
+    --pv-orange:   #f87840;
+    --pv-olive:    #7d754e;
+    --pv-gold:     #e8a03e;
+    --pv-sand:     #c9b27f;
+
+    --sc-section: clamp(3.5rem, 7vw, 7.5rem);
+    --pv-shadow: 0 18px 40px -20px rgba(28,23,18,0.45);
+  }
+
+  /* NOT scroll-behavior:smooth on html: the engine already lerps pin/pan
+     progress internally (see scrollcraft.js), and browser-level smooth
+     scroll queues an animated scroll on top of that instead of jumping,
+     so the two fight each other. That's what was making the Safari rail
+     feel laggy/unresponsive. Nav anchors get their own JS smooth-scroll
+     below, scoped to just those clicks. */
+  body { background: var(--pv-cream); color: var(--sc-ink); font-family: var(--sc-font-text); }
+
+  .pv-dark-block {
+    --sc-canvas: var(--pv-dark);
+    --sc-surface: var(--pv-dark-2);
+    --sc-ink: #f3ece0;
+    --sc-ink-soft: #b3a695;
+    --sc-accent: var(--pv-orange);
+    --sc-accent-ink: #17120e;
+    background: var(--pv-dark);
+    color: var(--sc-ink);
+  }
+  .pv-cream-block { background: var(--pv-cream); color: var(--sc-ink); }
+  .pv-cream-deep  { background: var(--pv-cream-dp); color: var(--sc-ink); }
+
+  /* ---------- type ---------- */
+  .sc-display { font-weight: 900; text-transform: uppercase; letter-spacing: -0.015em; line-height: 0.96; text-wrap: balance; }
+  .pv-h2 { font-size: clamp(2rem, 4.6vw, 4rem); margin: 0 0 1.4rem; max-width: 24ch; }
+  .pv-h3 { font-family: var(--sc-font-display); font-weight: 900; text-transform: uppercase; letter-spacing: 0; font-size: clamp(1.15rem, 1.9vw, 1.5rem); margin: 2.4rem 0 0.8rem; }
+  .pv-prose { max-width: 62ch; }
+  .pv-prose p { font-size: clamp(1.02rem, 1.35vw, 1.15rem); line-height: 1.62; margin: 0; color: var(--sc-ink); text-wrap: pretty; }
+  .pv-prose p + p { margin-top: 1.05em; }
+  .pv-prose blockquote { margin: 1.4em 0 0; padding-left: 1.1rem; border-left: 3px solid var(--pv-rust); font-size: clamp(1.05rem, 1.5vw, 1.25rem); line-height: 1.5; font-weight: 500; }
+  .pv-prose blockquote p { font-weight: 500; }
+  /* .pv-prose p zeroes margins at higher specificity, so scope this one */
+  .pv-close-line, .pv-prose .pv-close-line { margin-top: 1.6rem; font-weight: 700; color: var(--pv-rust-ink); font-size: clamp(1rem, 1.4vw, 1.12rem); }
+  .pv-dark-block .pv-close-line { color: var(--pv-orange); }
+
+  .pv-eyebrow { font-size: 0.74rem; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: var(--pv-rust); margin: 0 0 0.9rem; }
+  .pv-dark-block .pv-eyebrow { color: var(--pv-orange); }
+
+  .pv-tight-top { padding-top: clamp(1.25rem, 2.5vw, 2.5rem) !important; }
+
+  /* ---------- livery stripe band: the car's graduated stripes, in brand colours ---------- */
+  .pv-band {
+    height: 10px; width: 100%; pointer-events: none;
+    background:
+      linear-gradient(var(--pv-olive), var(--pv-olive)) 0 0    / 100% 1px no-repeat,
+      linear-gradient(var(--pv-gold),  var(--pv-gold))  0 3px  / 100% 2px no-repeat,
+      linear-gradient(var(--pv-rust),  var(--pv-rust))  0 7px  / 100% 3px no-repeat;
+  }
+
+  /* ---------- background motifs (original line art, one per section, faint) ---------- */
+  .pv-motif { position: absolute; pointer-events: none; z-index: 0; opacity: 0.2; }
+  .pv-dark-block .pv-motif { opacity: 0.3; }
+  .pv-motif--dial    { width: min(48vw, 620px); }
+  .pv-motif--wheel   { width: min(44vw, 580px); }
+  .pv-motif--podium  { width: min(30vw, 330px); }
+  .pv-motif--lamps   { width: min(28vw, 320px); }
+  .pv-motif--rack    { width: min(46vw, 600px); }
+  .pv-motif--map     { width: min(64vw, 820px); }
+  .pv-motif--circuit { width: min(62vw, 800px); }
+  .pv-motif--wave    { width: min(70vw, 980px); }
+
+  /* ---------- site bar ---------- */
+  .site-bar {
+    position: fixed; inset: 0 0 auto 0; z-index: 40;
+    display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+    padding: 0.65rem clamp(1rem, 4vw, 2.5rem);
+    background: color-mix(in srgb, var(--pv-cream) 92%, transparent);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid color-mix(in srgb, var(--pv-dark) 12%, transparent);
+  }
+  .pv-mark { display: flex; align-items: center; gap: 0.55rem; color: var(--pv-dark); text-decoration: none; flex: none; }
+  .pv-mark__badge { width: 26px; height: 26px; flex: none; }
+  .pv-mark__word { font-weight: 900; font-size: 0.85rem; letter-spacing: 0.03em; text-transform: uppercase; }
+  .pv-nav { display: flex; gap: clamp(0.9rem, 2vw, 1.6rem); margin-inline: auto; }
+  .pv-nav a { font-size: 0.82rem; font-weight: 500; color: var(--sc-ink-soft); text-decoration: none; padding: 0.3rem 0; border-bottom: 1px solid transparent; transition: color 180ms, border-color 180ms; }
+  .pv-nav a:hover { color: var(--pv-dark); border-color: var(--pv-rust); }
+  .pv-nav-cta {
+    font-size: 0.78rem; font-weight: 600; letter-spacing: 0.02em; flex: none;
+    color: var(--pv-cream); background: var(--pv-rust); text-decoration: none;
+    padding: 0.5rem 1rem; border-radius: 999px; transition: background 180ms, transform 180ms;
+  }
+  .pv-nav-cta:hover { background: #8c2706; }
+  .pv-nav-cta:active { transform: translateY(1px); }
+  @media (max-width: 760px) { .pv-nav { display: none; } }
+
+  a:focus-visible, button:focus-visible { outline: 2px solid var(--pv-rust); outline-offset: 3px; }
+  .pv-dark-block a:focus-visible { outline-color: var(--pv-orange); }
+
+  /* ---------- hero ---------- */
+  .pv-hero-stage { background: var(--pv-dark); }
+  .pv-hero-img { position: absolute; inset: 0; overflow: hidden; }
+  .pv-hero-img img {
+    position: absolute; inset: -4%; width: 108%; height: 108%;
+    max-width: none; object-fit: cover; object-position: 50% 40%;
+    filter: saturate(1.06) contrast(1.04); will-change: transform;
+  }
+  .pv-hero-scrim {
+    position: absolute; inset: 0; z-index: 1; pointer-events: none;
+    background: linear-gradient(0deg, rgba(10,8,6,0.9) 0%, rgba(10,8,6,0.6) 34%, rgba(10,8,6,0.16) 72%, rgba(10,8,6,0.06) 100%);
+  }
+  .pv-hero-copy { position: absolute; z-index: 2; left: clamp(1rem, 4vw, 3rem); right: clamp(1rem, 4vw, 3rem); bottom: clamp(3rem, 10vh, 6.5rem); color: #f7f1e6; }
+  .pv-hero-copy h1 { font-size: clamp(2.4rem, 6.4vw, 5.6rem); max-width: 20ch; color: #fbf6ec; text-shadow: 0 2px 14px rgba(0,0,0,0.92), 0 4px 8px rgba(0,0,0,0.9); margin: 0; }
+  .pv-hero-copy p { max-width: 44ch; margin: 1rem 0 0; font-size: clamp(1rem, 1.5vw, 1.2rem); line-height: 1.5; color: #e8ddcb; text-shadow: 0 1px 8px rgba(0,0,0,0.95); }
+  .pv-hero-band { position: absolute; left: 0; right: 0; bottom: 0; z-index: 3; }
+
+  /* ---------- section 2: the captain (prose + sidebar list) ---------- */
+  .pv-captain { display: grid; grid-template-columns: minmax(0, 62ch) minmax(14rem, 20rem); gap: clamp(2rem, 5vw, 5rem); align-items: start; position: relative; z-index: 1; }
+  /* contained card, not an open-ended list: a shorter sidebar reads as
+     intentional inside a bordered box, but as "ran out of content" when
+     it's just floating list items beside a much taller prose column */
+  .pv-roll { margin-top: 0.6rem; background: var(--sc-surface); border: 1px solid color-mix(in srgb, var(--pv-dark) 14%, transparent); border-radius: 2px; padding: 1.3rem 1.4rem; box-shadow: var(--pv-shadow); }
+  .pv-roll h3 { font-size: 0.74rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--sc-ink-soft); margin: 0 0 0.9rem; }
+  .pv-roll ul { list-style: none; margin: 0; padding: 0; }
+  .pv-roll li { padding: 0.65rem 0; border-top: 1px solid color-mix(in srgb, var(--pv-dark) 14%, transparent); font-size: 1rem; }
+  .pv-roll li:first-child { border-top: 0; padding-top: 0; }
+  .pv-roll li:last-child { padding-bottom: 0; }
+  .pv-roll li span { display: block; color: var(--sc-ink-soft); font-size: 0.82rem; margin-top: 0.15rem; }
+  @media (max-width: 860px) { .pv-captain { grid-template-columns: 1fr; } }
+
+  /* ---------- section 3: porsche (centred) ---------- */
+  .pv-center { text-align: center; position: relative; z-index: 1; }
+  .pv-center .pv-h2 { margin-inline: auto; max-width: 18ch; }
+  .pv-center .pv-prose { margin-inline: auto; max-width: 58ch; text-align: left; }
+  .pv-porsche-photo { margin: 1.8rem auto 2rem; max-width: 60rem; text-align: left; }
+  .pv-porsche-photo img { width: 100%; height: auto; aspect-ratio: 640/135; object-fit: cover; }
+  .pv-facts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; margin: 2.6rem auto 0; max-width: 60rem; border-top: 1px solid color-mix(in srgb, var(--pv-dark) 18%, transparent); border-bottom: 1px solid color-mix(in srgb, var(--pv-dark) 18%, transparent); }
+  .pv-facts > div { padding: 1.3rem 1.2rem; text-align: left; font-size: 0.98rem; line-height: 1.45; }
+  .pv-facts > div + div { border-left: 1px solid color-mix(in srgb, var(--pv-dark) 18%, transparent); }
+  .pv-facts b { display: block; font-weight: 700; color: var(--pv-rust-ink); margin-bottom: 0.25rem; }
+  @media (max-width: 720px) { .pv-facts { grid-template-columns: 1fr; } .pv-facts > div + div { border-left: 0; border-top: 1px solid color-mix(in srgb, var(--pv-dark) 18%, transparent); } }
+
+  /* ---------- section 4: endurance (two columns, dark) ---------- */
+  .pv-two { display: grid; grid-template-columns: minmax(0, 62ch) minmax(18rem, 30rem); gap: clamp(2rem, 5vw, 5rem); align-items: center; position: relative; z-index: 1; }
+  .pv-stats { display: flex; gap: clamp(1.25rem, 4vw, 3rem); flex-wrap: wrap; margin-top: 1.8rem; }
+  .pv-stat__num { font-weight: 900; font-size: clamp(2rem, 4.2vw, 2.9rem); color: var(--sc-accent); line-height: 1; }
+  .pv-stat__label { font-size: 0.78rem; color: var(--sc-ink-soft); margin-top: 0.3rem; }
+  .pv-feature-video {
+    display: block; text-decoration: none; color: inherit; border-radius: 2px; overflow: hidden;
+    background: var(--sc-surface); border: 1px solid color-mix(in srgb, currentColor 14%, transparent);
+    box-shadow: var(--pv-shadow); transition: transform 200ms cubic-bezier(0.23,1,0.32,1), border-color 200ms;
+  }
+  .pv-feature-video:hover { border-color: var(--sc-accent); transform: translateY(-2px); }
+  .pv-feature-video:active { transform: translateY(0); }
+  .pv-feature-video__thumb { position: relative; aspect-ratio: 16/9; background: #000; }
+  .pv-feature-video__thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .pv-feature-video__body { padding: 0.9rem 1rem 1rem; }
+  @media (max-width: 860px) { .pv-two { grid-template-columns: 1fr; } }
+
+  /* ---------- section 5: safari (wide photo, then rail) ---------- */
+  .pv-frame {
+    position: relative; margin: 0; background: var(--pv-cream-dp);
+    padding: 0.55rem 0.55rem 0; border: 1px solid color-mix(in srgb, var(--pv-dark) 16%, transparent);
+    box-shadow: var(--pv-shadow); border-radius: 2px;
+  }
+  .pv-frame img { width: 100%; display: block; object-fit: cover; }
+  .pv-frame figcaption { font-size: 0.78rem; color: var(--sc-ink-soft); padding: 0.55rem 0.15rem 0.6rem; }
+  .pv-frame figcaption b { color: var(--pv-rust-ink); font-weight: 700; }
+  .pv-safari-photo { position: relative; z-index: 1; }
+  .pv-safari-photo img { height: clamp(16rem, 44vw, 34rem); object-position: 50% 55%; }
+  .pv-safari-copy { position: relative; z-index: 1; margin-top: 2.6rem; }
+
+  .pv-rail { display: flex; gap: clamp(0.9rem, 1.8vw, 1.5rem); padding: 0 clamp(1rem, 4vw, 3rem); align-items: center; height: 100%; position: relative; }
+  .pv-rail__lead { flex: none; width: clamp(13rem, 23vw, 18rem); position: relative; z-index: 1; }
+  .pv-rail__lead p { font-size: 1rem; line-height: 1.55; margin: 0.6rem 0 0; color: var(--sc-ink); }
+  .pv-rail .pv-frame { flex: none; width: clamp(12rem, 19vw, 15.5rem); }
+  .pv-rail .pv-frame img { height: min(56vh, 30rem); }
+  .pv-rail .pv-frame--wide { width: clamp(20rem, 34vw, 28rem); }
+
+  /* ---------- section 6: podcast ---------- */
+  /* three columns at desktop: lead spans two, so eight cards fill 2+1 / 3 / 3 with no orphan */
+  .pv-gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 330px), 1fr)); gap: clamp(0.85rem, 1.6vw, 1.25rem); margin-top: 1.8rem; align-items: start; }
+  .pv-ep--lead { grid-column: span 2; }
+  @media (max-width: 600px) { .pv-ep--lead { grid-column: span 1; } }
+  .pv-ep {
+    display: block; text-decoration: none; color: inherit;
+    background: var(--sc-surface); border-radius: 2px; overflow: hidden;
+    border: 1px solid color-mix(in srgb, var(--pv-dark) 12%, transparent);
+    box-shadow: var(--pv-shadow);
+    transition: transform 200ms cubic-bezier(0.23,1,0.32,1), border-color 200ms;
+  }
+  .pv-ep:hover { transform: translateY(-3px); border-color: var(--sc-accent); }
+  .pv-ep:active { transform: translateY(0); }
+  .pv-ep__thumb { position: relative; aspect-ratio: 16/9; background: #000; }
+  .pv-ep__thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .pv-ep__dur { position: absolute; right: 0.4rem; bottom: 0.4rem; background: rgba(0,0,0,0.8); color: #fff; font-size: 0.68rem; font-weight: 600; padding: 0.12rem 0.36rem; border-radius: 2px; font-variant-numeric: tabular-nums; }
+  .pv-ep__play { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 200ms; background: rgba(170,48,7,0.35); color: #fff; font-size: 1.6rem; }
+  @media (hover: hover) and (pointer: fine) { .pv-ep:hover .pv-ep__play, .pv-feature-video:hover .pv-ep__play { opacity: 1; } }
+  .pv-ep__body { padding: 0.75rem 0.85rem 0.9rem; }
+  .pv-ep__title { font-weight: 600; font-size: 0.92rem; line-height: 1.3; }
+  .pv-ep--lead .pv-ep__title { font-size: 1.1rem; }
+  .pv-ep__meta { margin-top: 0.3rem; font-size: 0.76rem; color: var(--sc-ink-soft); }
+  .pv-gallery-links { display: flex; gap: 0.7rem; margin-top: 1.8rem; flex-wrap: wrap; }
+  .pv-platform { display: inline-flex; align-items: center; gap: 0.45rem; font-size: 0.84rem; font-weight: 600; color: inherit; text-decoration: none; padding: 0.6rem 1.05rem; border-radius: 999px; border: 1px solid color-mix(in srgb, currentColor 28%, transparent); transition: border-color 180ms, color 180ms; }
+  .pv-platform:hover { border-color: var(--pv-rust); color: var(--pv-rust-ink); }
+
+  /* ---------- section 7: close ---------- */
+  /* content-hugging, not a forced full-viewport block: "just tall enough to
+     fit the text and the buttons," not padded out to fill the screen */
+  .pv-close { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: clamp(2.5rem, 6vh, 4rem) clamp(1rem, 4vw, 3rem) clamp(1.75rem, 4vh, 2.5rem); text-align: center; }
+  .pv-close .pv-h2 { margin-inline: auto; max-width: 18ch; }
+  .pv-close p { margin: 0 0 1.2rem; font-size: 1.05rem; color: var(--sc-ink-soft); }
+  .pv-close-links { display: flex; gap: clamp(1.1rem, 3vw, 2.2rem); justify-content: center; flex-wrap: wrap; margin-top: 1.8rem; }
+  /* both Instagram accounts get identical weight: same size, same fill,
+     told apart by handle and a small caption, not by one being the
+     "real" button and one an afterthought outline */
+  .pv-social { display: flex; flex-direction: column; align-items: center; gap: 0.6rem; }
+  .pv-social__label { font-size: 0.72rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--sc-ink-soft); }
+  .cta { display: inline-block; font-weight: 700; font-size: 1rem; color: #fbf6ec; background: var(--pv-rust); padding: 1rem 2.1rem; border-radius: 999px; text-decoration: none; transition: transform 180ms cubic-bezier(0.23,1,0.32,1), background 180ms; }
+  .cta:hover { background: #c4380a; transform: translateY(-1px); }
+  .cta:active { transform: translateY(0); }
+  .cta--ghost { background: transparent; color: inherit; border: 1px solid color-mix(in srgb, currentColor 32%, transparent); }
+  .cta--ghost:hover { background: color-mix(in srgb, currentColor 8%, transparent); }
+  .foot { margin-top: 1.5rem; padding-top: 0.6rem; width: min(100%, 60rem); border-top: 1px solid color-mix(in srgb, currentColor 14%, transparent); font-size: 0.7rem; color: var(--sc-ink-soft); text-align: center; }
+
+  /* ---------- signature move: the flight log ---------- */
+  #pv-flightlog {
+    position: fixed; left: clamp(0.85rem, 2.5vw, 1.75rem); bottom: clamp(0.85rem, 2.5vw, 1.75rem); z-index: 45;
+    font-size: 0.7rem; letter-spacing: 0.04em; color: var(--pv-dark); display: flex; align-items: center; gap: 0.5rem;
+    padding: 0.42rem 0.8rem 0.42rem 0.55rem; border-radius: 999px;
+    background: color-mix(in srgb, var(--pv-cream) 92%, transparent);
+    border: 1px solid color-mix(in srgb, var(--pv-rust) 40%, transparent);
+    backdrop-filter: blur(6px); pointer-events: none; box-shadow: 0 6px 18px -10px rgba(23,18,14,0.5);
+  }
+  #pv-flightlog[hidden] { display: none; }
+  #pv-flightlog .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--pv-rust); flex: none; }
+  #pv-flightlog span[data-role="stamp"] { font-weight: 600; transition: opacity 240ms; }
+
+  @media (prefers-reduced-motion: reduce) { .pv-hero-img img { transition: none !important; } }
+</style>
+</head>
+<body>
+
+<span data-sc-progress></span>
+<div class="sc-grain" aria-hidden="true"></div>
+
+<div id="pv-flightlog" aria-hidden="true">
+  <span class="dot"></span>
+  <span data-role="stamp">Full speed ahead, est. 2025</span>
+</div>
+
+<header class="site-bar">
+  <a class="pv-mark" href="#top">
+    <svg class="pv-mark__badge" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+      <circle cx="16" cy="16" r="14.5" stroke="var(--pv-rust)" stroke-width="1.2"/>
+      <path d="M4 16h6M22 16h6M16 4v6M16 22v6" stroke="var(--pv-rust)" stroke-width="1.2"/>
+      <path d="M16 9 L20 16 L16 23 L12 16 Z" fill="var(--pv-rust)"/>
+    </svg>
+    <span class="pv-mark__word">Peter van der Spuy</span>
+  </a>
+  <nav class="pv-nav" aria-label="Sections">
+    <a href="#captain">The captain</a>
+    <a href="#porsche">Porsche</a>
+    <a href="#endurance">Endurance</a>
+    <a href="#safari">Safari</a>
+    <a href="#podcast">Podcast</a>
+  </nav>
+  <a class="pv-nav-cta" href="#podcast">Follow the journey</a>
+</header>
+
+<main id="top">
+
+  <!-- 1 · HERO: the whole photo, undivided; the one pinned moment -->
+  <section data-sc-act="pin" data-sc-span="1.6">
+    <div data-sc-stage class="pv-hero-stage">
+      <div class="pv-hero-img" data-sc-parallax="-0.3">
+        <img src="assets/hero/edit_v4_preview.jpg" alt="A Gulfstream business jet passing directly overhead as Peter van der Spuy sits astride a custom chopper motorcycle on a dusty airfield at dusk.">
+      </div>
+      <div class="pv-hero-scrim" aria-hidden="true"></div>
+      <div class="pv-hero-copy" data-sc-cue="0 1 0 0">
+        <h1 class="sc-display">One life, several careers, all of them at full throttle.</h1>
+        <p>One of the world's most experienced Gulfstream captains. A lifelong Porsche racer. The man who took a 911 into the African bush, and came back to tell the story.</p>
+      </div>
+      <div class="pv-band pv-hero-band" aria-hidden="true"></div>
+    </div>
+  </section>
+
+  <!-- 2 · THE CAPTAIN -->
+  <section class="sc-section pv-tight-top pv-cream-block" id="captain">
+    <div class="sc-wrap" style="position:relative;">
+      <svg class="pv-motif pv-motif--dial" style="right:-6%; top:-4%;" viewBox="0 0 200 200" aria-hidden="true">
+        <circle cx="100" cy="100" r="92" stroke="var(--pv-rust)" stroke-width="1.4" fill="none"/>
+        <circle cx="100" cy="100" r="82" stroke="var(--pv-rust)" stroke-width="1" fill="none"/>
+        <circle cx="100" cy="100" r="60" stroke="var(--pv-rust)" stroke-width="0.8" fill="none"/>
+        <!-- 24 minor ticks, full instrument-bezel ring -->
+        <g stroke="var(--pv-rust)" stroke-width="0.8">
+          <path d="M100 10 L100 20 M100 180 L100 190 M10 100 L20 100 M180 100 L190 100"/>
+          <path d="M56 20 L61 28 M139 172 L144 180 M20 56 L28 61 M172 139 L180 144"/>
+          <path d="M20 144 L28 139 M172 61 L180 56 M144 20 L139 28 M56 180 L61 172"/>
+          <path d="M35 35 L41 41 M159 159 L165 165 M35 165 L41 159 M159 41 L165 35"/>
+          <path d="M78 12 L80 22 M120 12 L118 22 M78 188 L80 178 M120 188 L118 178"/>
+          <path d="M12 78 L22 80 M12 120 L22 118 M188 78 L178 80 M188 120 L178 118"/>
+        </g>
+        <!-- major ticks, bolder -->
+        <g stroke="var(--pv-rust)" stroke-width="1.6">
+          <path d="M100 12 L100 30 M100 170 L100 188 M12 100 L30 100 M170 100 L188 100"/>
+          <path d="M40 40 L52 52 M148 148 L160 160 M40 160 L52 148 M148 52 L160 40"/>
+        </g>
+        <path d="M100 100 L136 58" stroke="var(--pv-rust)" stroke-width="3" stroke-linecap="round"/>
+        <path d="M100 100 L78 128" stroke="var(--pv-rust)" stroke-width="1.8" stroke-linecap="round" opacity="0.7"/>
+        <circle cx="100" cy="100" r="5" fill="var(--pv-rust)"/>
+      </svg>
+
+      <p class="pv-eyebrow" style="position:relative; z-index:1;">Command</p>
+      <h2 class="sc-display pv-h2" style="position:relative; z-index:1;">One of the most experienced Gulfstream captains in the world.</h2>
+
+      <div class="pv-captain">
+        <div class="pv-prose">
+          <p>Peter has spent more than twenty years in the left seat of intercontinental business jets, flying for most of each year outside South Africa: Europe, North America, Asia, and across Africa. Heads of state, Nobel laureates, Hollywood names, sheikhs, oligarchs and global captains of industry have all sat behind him. It is a job that runs on discretion, so he still won't say who he flies today.</p>
+          <p>He came to it sideways. Peter trained first as a chemical engineer, working in combustion and cryogenics, and took flying lessons on the side. For his final navigation exam he wrote a piece of software, then sold it to other pilots. When a friend who owned an aircraft offered to pay for his type rating, he quit the same day and never went back.</p>
+          <p>His wall of fame reads like a history syllabus. In 1993, the year before Nelson Mandela became president, Peter was the pilot trusted to fly him through the negotiations that ended apartheid. The photograph from those flights, Mandela with the senior ANC leadership on the apron, still hangs above his desk.</p>
+          <blockquote><p>"One day, Mr. Mandela called and asked for this photo, as it was one of the last ones that showed the leadership together. I sent him a copy in a beautiful frame. I understand it ended up in his office."</p></blockquote>
+          <p class="pv-close-line">Twenty years. Every continent he's rated for. Still flying.</p>
+        </div>
+        <aside class="pv-roll">
+          <h3>Among the passengers</h3>
+          <ul>
+            <li>Nelson Mandela <span>President of South Africa, Nobel laureate</span></li>
+            <li>Helmut Kohl <span>Chancellor of Germany</span></li>
+            <li>Cyril Ramaphosa <span>President of South Africa</span></li>
+            <li>Pik Botha <span>Foreign Minister of South Africa</span></li>
+          </ul>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <div class="pv-band" aria-hidden="true"></div>
+
+  <!-- 3 · PORSCHE -->
+  <section class="sc-section pv-cream-deep" id="porsche">
+    <div class="sc-wrap" style="position:relative;">
+      <svg class="pv-motif pv-motif--wheel" style="left:-6%; bottom:-14%;" viewBox="0 0 200 200" aria-hidden="true">
+        <circle cx="100" cy="100" r="96" stroke="var(--pv-dark)" stroke-width="1.8" fill="none"/>
+        <circle cx="100" cy="100" r="80" stroke="var(--pv-dark)" stroke-width="1" fill="none"/>
+        <circle cx="100" cy="100" r="60" stroke="var(--pv-dark)" stroke-width="0.8" fill="none"/>
+        <circle cx="100" cy="100" r="26" stroke="var(--pv-dark)" stroke-width="1.4" fill="none"/>
+        <circle cx="100" cy="100" r="7" fill="var(--pv-dark)"/>
+        <!-- 12-spoke wire wheel, between the hub and the rim -->
+        <g stroke="var(--pv-dark)" stroke-width="1.1">
+          <path d="M100 100 L100 24 M100 100 L100 176 M100 100 L24 100 M100 100 L176 100"/>
+          <path d="M100 100 L153 47 M100 100 L47 153 M100 100 L153 153 M100 100 L47 47"/>
+          <path d="M100 100 L131 30 M100 100 L69 170 M100 100 L170 69 M100 100 L30 131"/>
+          <path d="M100 100 L69 30 M100 100 L131 170 M100 100 L170 131 M100 100 L30 69"/>
+        </g>
+        <!-- lug bolt ring -->
+        <g fill="var(--pv-dark)">
+          <circle cx="100" cy="76" r="2.6"/><circle cx="121" cy="88" r="2.6"/><circle cx="121" cy="112" r="2.6"/>
+          <circle cx="100" cy="124" r="2.6"/><circle cx="79" cy="112" r="2.6"/><circle cx="79" cy="88" r="2.6"/>
+        </g>
+      </svg>
+
+      <div class="pv-center">
+        <h2 class="sc-display pv-h2">A lifetime inside the Porsche world.</h2>
+        <figure class="pv-frame pv-porsche-photo">
+          <img src="assets/safari/race-18-crop.jpg" alt="Peter's Porsche 911 race car, number 18 in Martini livery, on track.">
+          <figcaption><b>On track.</b> Car 18, GT-series form.</figcaption>
+        </figure>
+        <div class="pv-prose">
+          <p>Peter has been racing Porsches, and living inside the Porsche community, for essentially his entire adult life. Not as a collector who watches from the paddock fence: as a driver, a club member, and a man who has had many different cars from Zuffenhausen pass through his garage over the decades.</p>
+          <p>GT-series racing. Hill climbs. Club events. Concours fields. His 911 (964) cabriolet has taken six Concours championships with the Porsche Club of South Africa, the kind of record that only comes from decades of showing up with a car kept in perfect condition. "I'm an absolute technology freak," he says. "It's in my engineer's genes."</p>
+          <p>Porsche themselves came to him: the factory profiled Peter in <em>Christophorus</em>, their own customer magazine, as a die-hard of the marque. "Porsches, for me, are the best-built sports cars in the world," he told them. "Porsche and my job are closely intertwined."</p>
+          <p class="pv-close-line">Six Concours championships. One marque. A whole life.</p>
+        </div>
+        <div class="pv-facts">
+          <div><b>Six Concours championships</b>Porsche Club of South Africa, with one 911 (964) cabriolet.</div>
+          <div><b>Profiled by Porsche</b>Featured in <em>Christophorus</em>, the factory's own customer magazine.</div>
+          <div><b>GT series and hill climbs</b>Competing at club and national level for well over a decade.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="pv-band" aria-hidden="true"></div>
+
+  <!-- 4 · ENDURANCE (dark) -->
+  <section class="sc-section pv-dark-block" id="endurance">
+    <div class="sc-wrap" style="position:relative;">
+      <svg class="pv-motif pv-motif--circuit" style="left:-8%; top:50%; transform:translateY(-50%);" viewBox="0 0 560 360" aria-hidden="true">
+        <!-- an evocation of Kyalami's flow (long straight, sweeping esses, a
+             tight infield complex), not a surveyed trace of the real circuit.
+             Rhumb-line compass rose echoes the aged-chart treatment on the
+             Safari map motif -->
+        <g stroke="var(--pv-orange)" stroke-width="0.75" opacity="0.5">
+          <path d="M300,190 L300,10"/>
+          <path d="M300,190 L300,354"/>
+          <path d="M300,190 L10,190"/>
+          <path d="M300,190 L550,190"/>
+          <path d="M300,190 L520,20"/>
+          <path d="M300,190 L520,340"/>
+          <path d="M300,190 L60,20"/>
+          <path d="M300,190 L60,340"/>
+        </g>
+        <path d="M300,176 L309,190 L300,204 L291,190 Z" stroke="var(--pv-orange)" stroke-width="1.2" fill="none"/>
+        <circle cx="300" cy="190" r="2.5" fill="var(--pv-orange)"/>
+        <path d="M80,300 L400,300 C450,300 496,278 496,232 L496,150 C496,102 452,80 402,90 C372,96 356,80 326,92 C298,103 306,126 278,120 C244,113 213,120 200,148 C190,171 154,180 130,210 L108,254 C96,276 88,284 80,300 Z"
+              stroke="var(--pv-orange)" stroke-width="4" fill="none"/>
+        <g stroke="var(--pv-orange)" stroke-width="2.5">
+          <path d="M240,300 L240,326"/>
+          <path d="M264,300 L264,326"/>
+          <path d="M288,300 L288,326"/>
+          <path d="M312,300 L312,326"/>
+        </g>
+        <path d="M200,286 L200,314" stroke="var(--pv-orange)" stroke-width="5"/>
+        <g stroke="var(--pv-orange)" stroke-width="1.6">
+          <path d="M496,190 L520,190"/>
+          <path d="M356,86 L356,60"/>
+          <path d="M180,160 L156,148"/>
+        </g>
+        <text x="80" y="344" font-family="Archivo" font-weight="900" font-size="26" letter-spacing="3" fill="var(--pv-orange)">KYALAMI</text>
+        <text x="296" y="344" font-family="Archivo" font-weight="700" font-size="18" letter-spacing="2" fill="var(--pv-orange)">9HR</text>
+      </svg>
+      <svg class="pv-motif pv-motif--podium" style="right:1%; bottom:-8%;" viewBox="0 0 220 160" aria-hidden="true">
+        <g stroke="var(--pv-orange)" stroke-width="1.4" fill="none">
+          <rect x="10" y="70" width="52" height="80"/>
+          <rect x="72" y="30" width="52" height="120"/>
+          <rect x="134" y="92" width="52" height="58"/>
+        </g>
+        <g stroke="var(--pv-orange)" stroke-width="1.8" fill="none">
+          <path d="M160 92 L160 62 M184 77 L160 62 L136 77"/>
+        </g>
+      </svg>
+
+      <div class="pv-two">
+        <div>
+          <h2 class="sc-display pv-h2">Nine hours, a privateer car, and a podium nobody expected.</h2>
+          <div class="pv-prose">
+            <p>Endurance racing is the discipline Peter is proudest of. Through the 2023 Southern African Endurance Series National Championship he shared a Cape Town-entered Dolphin Engineering car with co-drivers Byron Mitchell and Nian du Toit: a privateer Juno SS3 sports-prototype, Nissan V6-powered, running all season against factory-backed Lamborghini and Mercedes-AMG GT3 machinery.</p>
+            <p>The title fight came down to the Nine-Hours of Kyalami, the series' blue-riband finale, with 44 cars on the grid and the race live on SuperSport. The Dolphin Engineering crew were named among the teams with a real shot at the championship, and they held on to finish the season third in Class A, against a grid built to beat them.</p>
+          </div>
+          <div class="pv-stats">
+            <div><div class="pv-stat__num">9</div><div class="pv-stat__label">hours, Kyalami finale</div></div>
+            <div><div class="pv-stat__num">P3</div><div class="pv-stat__label">Class A, 2023 season</div></div>
+            <div><div class="pv-stat__num">3</div><div class="pv-stat__label">drivers, one privateer car</div></div>
+          </div>
+        </div>
+        <a class="pv-feature-video" href="https://www.youtube.com/watch?v=Qmkreklvnpc" target="_blank" rel="noopener">
+          <div class="pv-feature-video__thumb">
+            <img src="https://i.ytimg.com/vi/Qmkreklvnpc/hqdefault.jpg" alt="" loading="lazy">
+            <span class="pv-ep__dur">7:53</span>
+            <span class="pv-ep__play" aria-hidden="true">▶</span>
+          </div>
+          <div class="pv-feature-video__body">
+            <div class="pv-ep__title">Cape Town Supercar Club awards dinner: honouring the 2023 SAES campaign</div>
+            <div class="pv-ep__meta">Byron Mitchell and Peter van der Spuy, Team Dolphin Engineering</div>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5 · THE SAFARI PROJEK (peak): wide photo, then the rail -->
+  <section class="sc-section pv-cream-block" id="safari">
+    <div class="sc-wrap" style="position:relative;">
+      <svg class="pv-motif pv-motif--map" style="right:-8%; top:46%; transform:translateY(-50%);" viewBox="0 0 460 460" aria-hidden="true">
+        <!-- an evocation of Southern Africa in the style of an old expedition
+             chart: tinted coastline, political borders and a rhumb-line
+             compass rose, not a surveyed trace. The Camelthorn Pathfinders
+             route runs Zimbabwe into Botswana, per the expedition jacket patch -->
+        <g stroke="var(--pv-olive)" stroke-width="0.75" opacity="0.55">
+          <path d="M95,150 L95,4"/>
+          <path d="M95,150 L95,456"/>
+          <path d="M95,150 L4,150"/>
+          <path d="M95,150 L456,150"/>
+          <path d="M95,150 L456,20"/>
+          <path d="M95,150 L456,320"/>
+          <path d="M95,150 L20,20"/>
+          <path d="M95,150 L20,320"/>
+        </g>
+        <path d="M50,40 L100,28 L170,22 L245,42 L300,58 L345,95 L372,150 L380,215 L368,280 L338,335 L295,372 L230,392 L165,388 L108,368 L68,330 L42,270 L28,195 L32,120 L42,70 Z"
+              stroke="var(--pv-olive)" stroke-width="2.5" fill="var(--pv-olive)" fill-opacity="0.14"/>
+        <g stroke="var(--pv-olive)" stroke-width="1.4" fill="none" opacity="0.85">
+          <path d="M120,90 C126,180 132,260 138,340"/>
+          <path d="M138,160 C190,148 245,140 292,128"/>
+          <path d="M138,300 C210,290 285,278 350,265"/>
+          <path d="M292,128 C325,165 352,205 368,248"/>
+        </g>
+        <path d="M270,362 C278,362 284,368 284,375 C284,382 278,388 270,388 C262,388 256,382 256,375 C256,368 262,362 270,362 Z"
+              stroke="var(--pv-olive)" stroke-width="1" fill="none"/>
+        <path d="M250,110 C220,170 190,210 170,260 C155,295 125,320 90,345" stroke="var(--pv-rust)" stroke-width="3" stroke-dasharray="9 9" fill="none"/>
+        <circle cx="250" cy="110" r="8" fill="var(--pv-rust)"/>
+        <circle cx="170" cy="260" r="9" stroke="var(--pv-rust)" stroke-width="3" fill="var(--pv-cream)"/>
+        <circle cx="90" cy="345" r="8" fill="var(--pv-rust)"/>
+        <path d="M95,136 L104,150 L95,164 L86,150 Z" stroke="var(--pv-olive)" stroke-width="1.2" fill="var(--pv-cream)"/>
+        <circle cx="95" cy="150" r="2.5" fill="var(--pv-olive)"/>
+        <text x="195" y="348" font-family="Archivo" font-weight="900" font-size="18" letter-spacing="3" fill="var(--pv-olive)">ZIMBABWE</text>
+        <text x="52" y="348" font-family="Archivo" font-weight="700" font-size="12" letter-spacing="2" fill="var(--pv-olive)">BOTSWANA</text>
+        <text x="150" y="400" font-family="Archivo" font-weight="700" font-size="13" letter-spacing="2" fill="var(--pv-rust)">SOUTH AFRICA</text>
+      </svg>
+      <svg class="pv-motif pv-motif--lamps" style="left:-2%; top:-4%;" viewBox="0 0 260 120" aria-hidden="true">
+        <g stroke="var(--pv-rust)" stroke-width="1.6" fill="none">
+          <circle cx="70" cy="60" r="46"/><circle cx="70" cy="60" r="30"/><circle cx="70" cy="60" r="8"/>
+          <circle cx="190" cy="60" r="46"/><circle cx="190" cy="60" r="30"/><circle cx="190" cy="60" r="8"/>
+          <path d="M116 60 L144 60"/>
+        </g>
+      </svg>
+
+      <p class="pv-eyebrow" style="position:relative; z-index:1;">The Safari Projek</p>
+      <figure class="pv-frame pv-safari-photo" data-sc-reveal="up" data-sc-reveal-at="0.08 0.5">
+        <img src="assets/safari/safari-saltpan-hero.jpg" alt="The Camel Safari Porsche 911 in cream and blue livery, roof rack and spare wheel mounted, standing alone on a vast salt pan under a dramatic cloudy sky.">
+        <figcaption><b>Camel Safari Projek.</b> Nothing for miles in any direction.</figcaption>
+      </figure>
+
+      <div class="pv-safari-copy">
+        <h2 class="sc-display pv-h2">A Porsche, where a Porsche should never go.</h2>
+        <div class="pv-prose">
+          <p>Lifted, roof-racked, Falken-shod and built in Camel Trophy-inspired trim: a 911 rebuilt for the African bush, and then driven there. Peter calls it, in his own words, "the beginning of my love affair with my Porsche rally car."</p>
+          <p>On the 2025 Cape Rally it ran with the Camelthorn Pathfinders, across salt pans, through the aloes, and past the occasional elephant that wandered over to have a look. It is the project where his two worlds, the precision of a Porsche and the wildness of the bush, finally meet in one machine.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section data-sc-act="pan" data-sc-span="5.4">
+    <div data-sc-stage class="pv-cream-deep">
+      <svg class="pv-motif pv-motif--rack" style="left:-6%; top:6%;" viewBox="0 0 320 220" aria-hidden="true">
+        <g stroke="var(--pv-dark)" stroke-width="1.3" fill="none">
+          <rect x="10" y="20" width="300" height="170" rx="14"/>
+          <path d="M10 55 H310 M10 90 H310 M10 125 H310 M10 160 H310"/>
+          <path d="M55 20 V190 M100 20 V190 M145 20 V190 M190 20 V190 M235 20 V190 M280 20 V190"/>
+        </g>
+        <circle cx="255" cy="70" r="34" stroke="var(--pv-dark)" stroke-width="1.6" fill="none"/>
+        <circle cx="255" cy="70" r="22" stroke="var(--pv-dark)" stroke-width="1" fill="none"/>
+        <circle cx="255" cy="70" r="6" fill="var(--pv-dark)"/>
+      </svg>
+      <div class="pv-rail" data-sc-pan="0.06">
+        <div class="pv-rail__lead">
+          <h3 class="pv-h3" style="margin-top:0;">The build, on the road</h3>
+          <p>Rack, spare, mud flaps, twin lamps. And then everything the road put in front of it.</p>
+        </div>
+        <figure class="pv-frame pv-frame--wide">
+          <img src="assets/safari/safari-rear-beach.jpg" alt="Rear view of the Camel Safari Porsche 911 on a sand flat by the sea, roof rack carrying a spare wheel, Camel and Turbo badging across the tail.">
+          <figcaption><b>The build.</b> Rack, spare, mud flaps.</figcaption>
+        </figure>
+        <figure class="pv-frame">
+          <img src="assets/safari/rally-elephants.jpg" alt="Peter's rally-liveried Porsche 911 in Falken Motorsport colours parked on a bush track, with elephants standing behind it.">
+          <figcaption><b>On route.</b> The locals came to look.</figcaption>
+        </figure>
+        <figure class="pv-frame">
+          <img src="assets/safari/rally-rear-dusk.jpg" alt="Rear three-quarter of the Camel Safari Porsche 911 at dusk, roof rack and spare wheels mounted, expedition crest on the rear wing.">
+          <figcaption><b>Dusk.</b> Crest, rack, dust.</figcaption>
+        </figure>
+        <figure class="pv-frame">
+          <img src="assets/safari/rally-aloes.jpg" alt="Rally Porsches parked in a line behind desert aloe plants, car number 18 visible.">
+          <figcaption><b>Staging.</b> Aloes and start numbers.</figcaption>
+        </figure>
+        <figure class="pv-frame">
+          <img src="assets/safari/rally-convoy.jpg" alt="A line of rally-prepared Porsches parked on gravel at sunrise with crews standing alongside.">
+          <figcaption><b>The convoy.</b> First light.</figcaption>
+        </figure>
+        <figure class="pv-frame">
+          <img src="assets/safari/cheetah.jpg" alt="A cheetah sitting alert in dry grass under a thorn tree.">
+          <figcaption><b>Conservation.</b> "Cold and rainy, but we got rewarded."</figcaption>
+        </figure>
+        <figure class="pv-frame">
+          <img src="assets/safari/peter-pathfinder.jpg" alt="Peter van der Spuy in a wide-brimmed bush hat and blue sunglasses, wearing a Camelthorn Pathfinders expedition jacket.">
+          <figcaption><b>Camelthorn Pathfinders.</b> The driver.</figcaption>
+        </figure>
+        <figure class="pv-frame">
+          <img src="assets/safari/peter-grandtour.jpg" alt="Peter at the wheel in a Safari Porsche Grand Tour shirt and cap, sunlight through the windscreen.">
+          <figcaption><b>Behind the wheel.</b> Safari Porsche, the grand tour.</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <div class="pv-band" aria-hidden="true"></div>
+
+  <!-- 6 · THE PODCAST (with the Circle) -->
+  <section class="sc-section pv-tight-top pv-cream-block" id="podcast">
+    <div class="sc-wrap" style="position:relative;">
+      <svg class="pv-motif pv-motif--wave" style="right:-4%; top:-2%;" viewBox="0 0 600 120" aria-hidden="true">
+        <g stroke="var(--pv-rust)" stroke-width="4" stroke-linecap="round">
+          <line x1="20" y1="48" x2="20" y2="72"/><line x1="40" y1="32" x2="40" y2="88"/><line x1="60" y1="16" x2="60" y2="104"/>
+          <line x1="80" y1="40" x2="80" y2="80"/><line x1="100" y1="24" x2="100" y2="96"/><line x1="120" y1="10" x2="120" y2="110"/>
+          <line x1="140" y1="42" x2="140" y2="78"/><line x1="160" y1="28" x2="160" y2="92"/><line x1="180" y1="14" x2="180" y2="106"/>
+          <line x1="200" y1="36" x2="200" y2="84"/><line x1="220" y1="20" x2="220" y2="100"/><line x1="240" y1="46" x2="240" y2="74"/>
+          <line x1="260" y1="8" x2="260" y2="112"/><line x1="280" y1="30" x2="280" y2="90"/><line x1="300" y1="18" x2="300" y2="102"/>
+          <line x1="320" y1="44" x2="320" y2="76"/><line x1="340" y1="26" x2="340" y2="94"/><line x1="360" y1="12" x2="360" y2="108"/>
+          <line x1="380" y1="38" x2="380" y2="82"/><line x1="400" y1="22" x2="400" y2="98"/><line x1="420" y1="48" x2="420" y2="72"/>
+          <line x1="440" y1="16" x2="440" y2="104"/><line x1="460" y1="34" x2="460" y2="86"/><line x1="480" y1="24" x2="480" y2="96"/>
+          <line x1="500" y1="44" x2="500" y2="76"/><line x1="520" y1="28" x2="520" y2="92"/><line x1="540" y1="40" x2="540" y2="80"/>
+          <line x1="560" y1="50" x2="560" y2="70"/><line x1="580" y1="46" x2="580" y2="74"/>
+        </g>
+      </svg>
+      <h2 class="sc-display pv-h2">Every story here started as a conversation. Go hear it.</h2>
+      <div class="pv-prose">
+        <p>The Peter van der Spuy Podcast puts him across the table from people operating at the same edge: endurance racers, fellow pilots, conservationists, builders, and the occasional legend of South African motorsport. New full episodes land regularly on YouTube and Spotify.</p>
+
+        <h3 class="pv-h3">The circle</h3>
+        <p>Guest Nick Adcock broke into racing through one conversation in a shared office. Over 350 races later, he's still competing at Le Mans, and he sat down with Peter to explain how a late start turned into a world-class endurance career. Sarel van der Merwe and Ian Scheckter came in together to relive a rivalry that defined an era of South African racing. Simon Borchett brought the anti-poaching fight from the bush to the studio.</p>
+        <p>Peter isn't interviewing that world from the outside. He has lived in it for thirty years, and the guests talk to him the way they'd talk to another driver.</p>
+      </div>
+
+      <div class="pv-stats">
+        <div><div class="pv-stat__num">94</div><div class="pv-stat__label">episodes recorded</div></div>
+        <div><div class="pv-stat__num">20</div><div class="pv-stat__label">years in the cockpit</div></div>
+        <div><div class="pv-stat__num">6</div><div class="pv-stat__label">Concours championships</div></div>
+      </div>
+
+      <div class="pv-gallery-grid">
+        <a class="pv-ep pv-ep--lead" href="https://www.youtube.com/watch?v=DXFNS0AAsTA" target="_blank" rel="noopener">
+          <div class="pv-ep__thumb"><img src="https://i.ytimg.com/vi/DXFNS0AAsTA/hqdefault.jpg" alt="" loading="lazy"><span class="pv-ep__dur">55:18</span><span class="pv-ep__play" aria-hidden="true">▶</span></div>
+          <div class="pv-ep__body"><div class="pv-ep__title">The Camel Safari Porsche Projek: Africa's wildest Porsche 911 build</div><div class="pv-ep__meta">The story of the car, from Peter</div></div>
+        </a>
+        <a class="pv-ep" href="https://www.youtube.com/watch?v=qV_ueFgYQKI" target="_blank" rel="noopener">
+          <div class="pv-ep__thumb"><img src="https://i.ytimg.com/vi/qV_ueFgYQKI/hqdefault.jpg" alt="" loading="lazy"><span class="pv-ep__dur">48:56</span><span class="pv-ep__play" aria-hidden="true">▶</span></div>
+          <div class="pv-ep__body"><div class="pv-ep__title">We took a Porsche where it should never go</div><div class="pv-ep__meta">Camel Safari Projek, on the road</div></div>
+        </a>
+        <a class="pv-ep" href="https://www.youtube.com/watch?v=ErCS3GS_nQ0" target="_blank" rel="noopener">
+          <div class="pv-ep__thumb"><img src="https://i.ytimg.com/vi/ErCS3GS_nQ0/hqdefault.jpg" alt="" loading="lazy"><span class="pv-ep__dur">52:52</span><span class="pv-ep__play" aria-hidden="true">▶</span></div>
+          <div class="pv-ep__body"><div class="pv-ep__title">Chasing lions and adventures in the African bush, part one</div><div class="pv-ep__meta">with Robert Hofmeyer and The Missfits</div></div>
+        </a>
+        <a class="pv-ep" href="https://www.youtube.com/watch?v=m0VyfxJ38S4" target="_blank" rel="noopener">
+          <div class="pv-ep__thumb"><img src="https://i.ytimg.com/vi/m0VyfxJ38S4/hqdefault.jpg" alt="" loading="lazy"><span class="pv-ep__dur">1:40:45</span><span class="pv-ep__play" aria-hidden="true">▶</span></div>
+          <div class="pv-ep__body"><div class="pv-ep__title">Inside the world of billionaire jets, FedEx and Gulfstreams</div><div class="pv-ep__meta">with Basham Johnson</div></div>
+        </a>
+        <a class="pv-ep" href="https://www.youtube.com/watch?v=4tD27JKmzEk" target="_blank" rel="noopener">
+          <div class="pv-ep__thumb"><img src="https://i.ytimg.com/vi/4tD27JKmzEk/hqdefault.jpg" alt="" loading="lazy"><span class="pv-ep__dur">2:26:52</span><span class="pv-ep__play" aria-hidden="true">▶</span></div>
+          <div class="pv-ep__body"><div class="pv-ep__title">Endurance racing, business and high performance</div><div class="pv-ep__meta">with Nick Adcock</div></div>
+        </a>
+        <a class="pv-ep" href="https://www.youtube.com/watch?v=aE5_5u5bApM" target="_blank" rel="noopener">
+          <div class="pv-ep__thumb"><img src="https://i.ytimg.com/vi/aE5_5u5bApM/hqdefault.jpg" alt="" loading="lazy"><span class="pv-ep__dur">54:03</span><span class="pv-ep__play" aria-hidden="true">▶</span></div>
+          <div class="pv-ep__body"><div class="pv-ep__title">Inside the rivalry: Sarel van der Merwe and Ian Scheckter, unfiltered</div><div class="pv-ep__meta">Two legends, one studio</div></div>
+        </a>
+        <a class="pv-ep" href="https://www.youtube.com/watch?v=Xc4vrscvmJs" target="_blank" rel="noopener">
+          <div class="pv-ep__thumb"><img src="https://i.ytimg.com/vi/Xc4vrscvmJs/hqdefault.jpg" alt="" loading="lazy"><span class="pv-ep__dur">2:04:28</span><span class="pv-ep__play" aria-hidden="true">▶</span></div>
+          <div class="pv-ep__body"><div class="pv-ep__title">From the bush to the battle for wildlife: conservation stories from Africa</div><div class="pv-ep__meta">with Simon Borchett</div></div>
+        </a>
+        <a class="pv-ep" href="https://www.youtube.com/watch?v=AvwwZaGeIks" target="_blank" rel="noopener">
+          <div class="pv-ep__thumb"><img src="https://i.ytimg.com/vi/AvwwZaGeIks/hqdefault.jpg" alt="" loading="lazy"><span class="pv-ep__dur">1:51:08</span><span class="pv-ep__play" aria-hidden="true">▶</span></div>
+          <div class="pv-ep__body"><div class="pv-ep__title">From fast jets to frontline warfare and journalism</div><div class="pv-ep__meta">with Mikey Kay</div></div>
+        </a>
+      </div>
+
+      <div class="pv-gallery-links">
+        <a class="pv-platform" href="https://www.youtube.com/@PetervanderSpuyPodcast" target="_blank" rel="noopener">All episodes on YouTube</a>
+        <a class="pv-platform" href="https://open.spotify.com/show/4ZkpQugtATFTEZOBYUFSR9" target="_blank" rel="noopener">Listen on Spotify</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7 · CLOSE (dark, holds) -->
+  <section class="pv-dark-block" id="follow">
+    <div class="pv-close">
+      <p>He's not done yet.</p>
+      <h2 class="sc-display pv-h2">Follow where he flies, drives and drifts next.</h2>
+      <div class="pv-close-links">
+        <div class="pv-social">
+          <a class="cta" href="https://www.instagram.com/peter_vd_spuy/" target="_blank" rel="noopener">Follow @peter_vd_spuy</a>
+          <span class="pv-social__label">Personal, on Instagram</span>
+        </div>
+        <div class="pv-social">
+          <a class="cta" href="https://www.instagram.com/petervanderspuypodcast/" target="_blank" rel="noopener">Follow @petervanderspuypodcast</a>
+          <span class="pv-social__label">The podcast, on Instagram</span>
+        </div>
+      </div>
+      <footer class="foot">
+        <span>© Peter van der Spuy. Gulfstream captain, race driver, high-performance speaker.</span>
+      </footer>
+    </div>
+  </section>
+
+</main>
+
+<script src="scrollcraft.js"></script>
+<script>
+  ScrollCraft.mount(document.body);
+
+  // Smooth scroll scoped to nav/CTA anchor clicks only (not a blanket
+  // html { scroll-behavior: smooth }, which fights the engine's own
+  // internal pin/pan lerp on every ordinary scroll).
+  document.querySelectorAll('a[href^="#"]').forEach(function (a) {
+    a.addEventListener('click', function (e) {
+      var target = document.querySelector(a.getAttribute('href'));
+      if (!target) return;
+      e.preventDefault();
+      target.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+    });
+  });
+
+  // Signature move: the flight log. A small placard stamps a verified fact
+  // for whichever chapter is on screen.
+  (function () {
+    var log = document.getElementById('pv-flightlog');
+    var stampEl = log.querySelector('[data-role="stamp"]');
+    var stamps = [
+      'Full speed ahead, est. 2025',
+      'Cape Town, 1993',
+      'Porsche Club SA, six Concours',
+      'SAES 2023, P3 Class A',
+      'Safari Projek, Cape Rally 2025',
+      'Safari Projek, Cape Rally 2025',
+      '94 episodes and counting',
+      'Follow the journey'
+    ];
+    var sections = Array.prototype.slice.call(document.querySelectorAll('main > section'));
+    if (!('IntersectionObserver' in window) || !sections.length) { log.hidden = true; return; }
+
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) return;
+        var idx = sections.indexOf(entry.target);
+        if (idx === -1) return;
+        var next = stamps[idx] || stamps[stamps.length - 1];
+        if (stampEl.textContent === next) return;
+        stampEl.style.opacity = 0;
+        setTimeout(function () { stampEl.textContent = next; stampEl.style.opacity = 1; }, 150);
+      });
+    }, { threshold: 0, rootMargin: '-45% 0px -45% 0px' });
+
+    sections.forEach(function (s) { io.observe(s); });
+  })();
+</script>
+</body>
+</html>

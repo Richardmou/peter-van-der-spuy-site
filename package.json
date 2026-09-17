@@ -1,0 +1,8 @@
+{
+  "name": "peter-van-der-spuy-site",
+  "private": true,
+  "description": "Client mock-up tooling for the Peter van der Spuy scroll-craft build. The site itself lives in scrollcraft/builds/peter-van-der-spuy/.",
+  "devDependencies": {
+    "puppeteer-core": "^23.0.0"
+  }
+}

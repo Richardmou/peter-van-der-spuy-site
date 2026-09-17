@@ -1,0 +1,18 @@
+# dependencies
+**/node_modules/
+
+# large downloaded model (168MB, over GitHub's 100MB limit) — re-download via .models scripts
+.models/*.onnx
+
+# disposable verification/review output, regenerated on demand
+**/lab/
+temporary screenshots/
+.playwright-mcp/
+
+# dev server logs
+**/server.log
+*.log
+
+# OS junk
+Thumbs.db
+.DS_Store
