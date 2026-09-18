@@ -159,7 +159,12 @@
   .pv-center { text-align: center; position: relative; z-index: 1; }
   .pv-center .pv-h2 { margin-inline: auto; max-width: 18ch; }
   .pv-center .pv-prose { margin-inline: auto; max-width: 58ch; text-align: left; }
-  .pv-porsche-photo { margin: 1.8rem auto 2rem; max-width: 60rem; text-align: left; }
+  .pv-center .pv-two { margin: 1.8rem auto 0; text-align: left; }
+  .pv-center .pv-two .pv-prose { margin-inline: 0; max-width: none; }
+  @media (min-width: 861px) {
+    .pv-center .pv-two { grid-template-columns: minmax(0, 1fr) minmax(14rem, 18rem); gap: clamp(1.5rem, 4vw, 3rem); max-width: 60rem; }
+  }
+  .pv-porsche-photo { margin: 0; text-align: left; }
   .pv-porsche-photo img { width: 100%; height: auto; aspect-ratio: 640/135; object-fit: cover; }
   .pv-facts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; margin: 2.6rem auto 0; max-width: 60rem; border-top: 1px solid color-mix(in srgb, var(--pv-dark) 18%, transparent); border-bottom: 1px solid color-mix(in srgb, var(--pv-dark) 18%, transparent); }
   .pv-facts > div { padding: 1.3rem 1.2rem; text-align: left; font-size: 0.98rem; line-height: 1.45; }
@@ -389,15 +394,17 @@
 
       <div class="pv-center">
         <h2 class="sc-display pv-h2">A lifetime inside the Porsche world.</h2>
-        <figure class="pv-frame pv-porsche-photo">
-          <img src="assets/safari/race-18-crop.jpg" alt="Peter's Porsche 911 race car, number 18 in Martini livery, on track.">
-          <figcaption><b>On track.</b> Car 18, GT-series form.</figcaption>
-        </figure>
-        <div class="pv-prose">
-          <p>Peter has been racing Porsches, and living inside the Porsche community, for essentially his entire adult life. Not as a collector who watches from the paddock fence: as a driver, a club member, and a man who has had many different cars from Zuffenhausen pass through his garage over the decades.</p>
-          <p>GT-series racing. Hill climbs. Club events. Concours fields. His 911 (964) cabriolet has taken six Concours championships with the Porsche Club of South Africa, the kind of record that only comes from decades of showing up with a car kept in perfect condition. "I'm an absolute technology freak," he says. "It's in my engineer's genes."</p>
-          <p>Porsche themselves came to him: the factory profiled Peter in <em>Christophorus</em>, their own customer magazine, as a die-hard of the marque. "Porsches, for me, are the best-built sports cars in the world," he told them. "Porsche and my job are closely intertwined."</p>
-          <p class="pv-close-line">Six Concours championships. One marque. A whole life.</p>
+        <div class="pv-two">
+          <div class="pv-prose">
+            <p>Peter has been racing Porsches, and living inside the Porsche community, for essentially his entire adult life. Not as a collector who watches from the paddock fence: as a driver, a club member, and a man who has had many different cars from Zuffenhausen pass through his garage over the decades.</p>
+            <p>GT-series racing. Hill climbs. Club events. Concours fields. His 911 (964) cabriolet has taken six Concours championships with the Porsche Club of South Africa, the kind of record that only comes from decades of showing up with a car kept in perfect condition. "I'm an absolute technology freak," he says. "It's in my engineer's genes."</p>
+            <p>Porsche themselves came to him: the factory profiled Peter in <em>Christophorus</em>, their own customer magazine, as a die-hard of the marque. "Porsches, for me, are the best-built sports cars in the world," he told them. "Porsche and my job are closely intertwined."</p>
+            <p class="pv-close-line">Six Concours championships. One marque. A whole life.</p>
+          </div>
+          <figure class="pv-frame pv-porsche-photo">
+            <img src="assets/safari/race-18-crop.jpg" alt="Peter's Porsche 911 race car, number 18 in Martini livery, on track.">
+            <figcaption><b>On track.</b> Car 18, GT-series form.</figcaption>
+          </figure>
         </div>
         <div class="pv-facts">
           <div><b>Six Concours championships</b>Porsche Club of South Africa, with one 911 (964) cabriolet.</div>
