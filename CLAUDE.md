@@ -2,6 +2,29 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+You're working inside the **WAT framework** (Workflows, Agents, Tools). This architecture separates concerns so that probabilistic AI handles reasoning while deterministic code handles execution. That separation is what makes this system reliable.
+
+## The WAT Architecture
+
+**Layer 1: Workflows (The Instructions)**
+- Markdown SOPs stored in `workflows/`
+- Each workflow defines the objective, required inputs, which tools to use, expected outputs, and how to handle edge cases
+- Written in plain language, the same way you'd brief someone on your team
+
+**Layer 2: Agents (The Decision-Maker)**
+- This is your role. You're responsible for intelligent coordination.
+- Read the relevant workflow, run tools in the correct sequence, handle failures gracefully, and ask clarifying questions when needed
+- You connect intent to execution without trying to do everything yourself
+- Example: If you need to pull data from a website, don't attempt it directly. Read `workflows/scrape_website.md`, figure out the required inputs, then execute `tools/scrape_single_site.py`
+
+**Layer 3: Tools (The Execution)**
+- Python scripts in `tools/` that do the actual work
+- API calls, data transformations, file operations, database queries
+- Credentials and API keys are stored in `.env`
+- These scripts are consistent, testable, and fast
+
+**Why this matters:** When AI tries to handle every step directly, accuracy drops fast. If each step is 90% accurate, you're down to 59% success after just five steps. By offloading execution to deterministic scripts, you stay focused on orchestration and decision-making where you excel.
+
 ## What this is
 
 A single-page scroll-driven website for Peter van der Spuy (Gulfstream captain, Porsche racer, Camel Safari 911 builder, podcast host), built with the `nateherk-design:scroll-craft` plugin skill. It is a client mock-up being iterated from Peter's feedback. Not a git repo.
@@ -9,6 +32,34 @@ A single-page scroll-driven website for Peter van der Spuy (Gulfstream captain, 
 **Always invoke the `frontend-design` skill before writing any frontend code.** Then work inside the scroll-craft skill's rules (`SKILL.md` and `references/` in the plugin cache) — they govern devices, cues, grammar, verification and the taste floor.
 
 Skill path: `C:\Users\richa\.claude\plugins\cache\nateherk\nateherk-design\0.3.0\skills\scroll-craft`
+
+## Subagent Selection (Cost Control)
+
+When dispatching a subagent (the `Agent` tool — Explore, general-purpose, Plan, or any other available agent type, including model overrides), always choose the lowest-cost agent type and model that can reliably complete the task you're assigning it. Don't reach for a broader or more expensive agent/model by default — only escalate after a cheaper option has proven insufficient for that specific task.
+
+## Local Model Delegation (Free Local Fetch)
+
+Before doing bulk subtask work directly or reaching for a Claude subagent,
+check the global `local-model-delegation` skill — it routes well-suited
+subtasks (no current info/tool access needed, answerable in one
+self-contained shot, cheap to verify at a glance) to a free local Ollama
+model instead (`qwen3.5:9b` general-purpose, `qwen2.5-coder:7b` coding;
+machine-wide install, already running at `localhost:11434`). For
+multi-source research (scraping sites, pulling YouTube transcripts — e.g.
+the podcast channel referenced below) before a build/plan, use the
+`research-pipeline` skill instead — it handles the fetching and hands bulk
+summarization to the same local models.
+
+Reference implementation and full worked example:
+`C:\Users\richa\Documents\Claude\Training\workflows\delegate_to_local_model.md`.
+
+## Skill Check Before Complicated Tasks
+
+Before starting a complicated or multi-step task, first check whether an existing skill would streamline or simplify it — check skills already available/installed in the session first. If none fit, use the `find-skills` skill to search the external skills ecosystem (`npx skills find`) for one that could be installed, and offer it to the user before falling back to doing the task manually.
+
+## Stress-Test Before Finalizing
+
+Before finalizing `BRIEF.md` (journey, feeling curve, peak, signature move) or making a significant change to it, invoke the `grilling` skill to interview yourself about the direction and surface unsettled decisions before building it out.
 
 ## The site lives in one file
 
