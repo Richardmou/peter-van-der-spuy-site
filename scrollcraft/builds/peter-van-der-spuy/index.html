@@ -12,12 +12,14 @@
 <meta property="og:title" content="Peter van der Spuy. Pilot, racer, adventurer.">
 <meta property="og:description" content="An acclaimed Gulfstream captain with decades of experience, a lifelong Porsche racer, and the man who took a 911 into the African bush.">
 <meta property="og:url" content="https://petervanderspuy.com/">
-<meta property="og:image" content="https://petervanderspuy.com/assets/hero/edit_v4_preview.jpg">
+<meta property="og:image" content="https://petervanderspuy.com/assets/og-home.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
 <meta property="og:site_name" content="Peter van der Spuy">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Peter van der Spuy. Pilot, racer, adventurer.">
 <meta name="twitter:description" content="An acclaimed Gulfstream captain with decades of experience, a lifelong Porsche racer, and the man who took a 911 into the African bush.">
-<meta name="twitter:image" content="https://petervanderspuy.com/assets/hero/edit_v4_preview.jpg">
+<meta name="twitter:image" content="https://petervanderspuy.com/assets/og-home.jpg">
 
 <script type="application/ld+json">
 {
@@ -25,7 +27,7 @@
   "@type": "Person",
   "name": "Peter van der Spuy",
   "url": "https://petervanderspuy.com/",
-  "image": "https://petervanderspuy.com/assets/hero/edit_v4_preview.jpg",
+  "image": "https://petervanderspuy.com/assets/og-home.jpg",
   "jobTitle": "Gulfstream Captain, Race Driver and High-Performance Speaker",
   "description": "South African intercontinental Gulfstream business jet captain and motorsport race driver, trusted to fly global leaders including Nobel Laureate Nelson Mandela.",
   "sameAs": [
@@ -38,7 +40,7 @@
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="scrollcraft.css">
 <style>
   /* ============ theme: cream ground, dark highlight blocks, rust accent ============ */
@@ -72,8 +74,14 @@
      scroll queues an animated scroll on top of that instead of jumping,
      so the two fight each other. That's what was making the Safari rail
      feel laggy/unresponsive. Nav anchors get their own JS smooth-scroll
-     below, scoped to just those clicks. */
+     below, scoped to just those clicks. scrollcraft.css itself declares
+     html { scroll-behavior: smooth } (engine line 97), so it has to be
+     actively overridden here, not just left out. */
+  html { scroll-behavior: auto; }
   body { background: var(--pv-cream); color: var(--sc-ink); font-family: var(--sc-font-text); }
+  /* every <img> carries width/height attributes (reserves space, no layout
+     shift); without this the height attribute would win over CSS width:100% */
+  img { height: auto; }
 
   .pv-dark-block {
     --sc-canvas: var(--pv-dark);
@@ -124,7 +132,10 @@
   .pv-motif--lamps   { width: min(28vw, 320px); }
   .pv-motif--rack    { width: min(46vw, 600px); }
   .pv-motif--map     { width: min(64vw, 820px); }
-  .pv-motif--circuit { width: min(62vw, 800px); }
+  .pv-motif--circuit { width: min(62vw, 800px); left: -8%; top: 50%; transform: translateY(-50%); }
+  /* two-column endurance: the label sat between lines of body copy, so on
+     desktop the circuit takes the empty space under the video card instead */
+  @media (min-width: 861px) { .pv-motif--circuit { width: min(40vw, 520px); left: auto; right: -4%; top: auto; bottom: -1%; transform: none; } }
   .pv-motif--wave    { width: min(70vw, 980px); }
   .pv-motif--wings      { width: min(26vw, 300px); }
   .pv-motif--trophy     { width: min(16vw, 170px); }
@@ -143,17 +154,31 @@
   .pv-mark { display: flex; align-items: center; gap: 0.6rem; color: var(--pv-dark); text-decoration: none; flex: none; }
   .pv-mark__badge { width: 42px; height: 42px; flex: none; object-fit: contain; }
   .pv-mark__word { font-weight: 900; font-size: 0.85rem; letter-spacing: 0.03em; text-transform: uppercase; }
+  .pv-mark:hover .pv-mark__word { color: var(--pv-rust-ink); }
+  .pv-mark:active { opacity: 0.75; }
   .pv-nav { display: flex; gap: clamp(0.9rem, 2vw, 1.6rem); margin-inline: auto; }
-  .pv-nav a { font-size: 0.82rem; font-weight: 500; color: var(--sc-ink-soft); text-decoration: none; padding: 0.3rem 0; border-bottom: 1px solid transparent; transition: color 180ms, border-color 180ms; }
+  /* hover/active colour changes are instant: only transform and opacity animate */
+  .pv-nav a { font-size: 0.82rem; font-weight: 500; color: var(--sc-ink-soft); text-decoration: none; padding: 0.3rem 0; border-bottom: 1px solid transparent; }
   .pv-nav a:hover { color: var(--pv-dark); border-color: var(--pv-rust); }
+  .pv-nav a:active { color: var(--pv-rust-ink); }
   .pv-nav-cta {
-    font-size: 0.78rem; font-weight: 600; letter-spacing: 0.02em; flex: none;
+    font-size: 0.78rem; font-weight: 600; letter-spacing: 0.02em; flex: none; line-height: 1.2;
     color: var(--pv-cream); background: var(--pv-rust); text-decoration: none;
-    padding: 0.5rem 1rem; border-radius: 999px; transition: background 180ms, transform 180ms;
+    padding: 0.5rem 1rem; border-radius: 999px; transition: transform 180ms;
   }
   .pv-nav-cta:hover { background: #8c2706; }
   .pv-nav-cta:active { transform: translateY(1px); }
   @media (max-width: 760px) { .pv-nav { display: none; } }
+  /* with the section nav hidden, badge + wordmark + CTA outgrow a 390px
+     phone (the CTA was clipped at the right edge, worse at 360/375). Let
+     the wordmark wrap to two lines and tighten the CTA instead. */
+  @media (max-width: 480px) {
+    .site-bar { gap: 0.75rem; }
+    .pv-mark { flex: 0 1 auto; min-width: 0; gap: 0.5rem; }
+    .pv-mark__badge { width: 36px; height: 36px; }
+    .pv-mark__word { font-size: 0.74rem; line-height: 1.1; }
+    .pv-nav-cta { padding: 0.5rem 0.85rem; }
+  }
 
   a:focus-visible, button:focus-visible { outline: 2px solid var(--pv-rust); outline-offset: 3px; }
   .pv-dark-block a:focus-visible { outline-color: var(--pv-orange); }
@@ -186,12 +211,22 @@
      .pv-frame photo cards instead of episode cards. Must stay a static grid,
      not a new scroll-driven act (only the hero + Safari rail are
      scroll-driven, per the site's grammar) */
-  .pv-photo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); gap: clamp(0.85rem, 1.6vw, 1.25rem); margin-top: 2.4rem; position: relative; z-index: 1; }
+  /* dense packing + a full-row tile keep every row complete at both 3 and
+     2 columns: the lead adds one extra slot, a --full tile adds one row's
+     worth, so tile counts are chosen to divide evenly (Porsche 18 photos,
+     endurance 6). A --wide (span 2) tile can't do that at both widths,
+     which is what left the orphan tile / empty cell before. */
+  .pv-photo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); grid-auto-flow: row dense; gap: clamp(0.85rem, 1.6vw, 1.25rem); margin-top: 2.4rem; position: relative; z-index: 1; }
   .pv-photo-grid .pv-frame img { aspect-ratio: 4/3; object-fit: cover; }
-  .pv-photo-grid .pv-photo--lead, .pv-photo-grid .pv-photo--wide { grid-column: span 2; }
-  .pv-photo-grid .pv-photo--lead img, .pv-photo-grid .pv-photo--wide img { aspect-ratio: 16/10; }
+  .pv-photo-grid .pv-photo--lead { grid-column: span 2; }
+  .pv-photo-grid .pv-photo--full { grid-column: 1 / -1; }
+  .pv-photo-grid .pv-photo--lead img { aspect-ratio: 16/10; }
+  .pv-photo-grid .pv-photo--full img { aspect-ratio: 21/9; }
   .pv-photo-grid .pv-photo--tall img { aspect-ratio: 3/4; }
-  @media (max-width: 600px) { .pv-photo-grid .pv-photo--lead, .pv-photo-grid .pv-photo--wide { grid-column: span 1; } }
+  @media (max-width: 600px) {
+    .pv-photo-grid .pv-photo--lead { grid-column: span 1; }
+    .pv-photo-grid .pv-photo--full img { aspect-ratio: 16/10; }
+  }
   /* contained card, not an open-ended list: a shorter sidebar reads as
      intentional inside a bordered box, but as "ran out of content" when
      it's just floating list items beside a much taller prose column */
@@ -223,7 +258,7 @@
   .pv-feature-video {
     display: block; text-decoration: none; color: inherit; border-radius: 2px; overflow: hidden;
     background: var(--sc-surface); border: 1px solid color-mix(in srgb, currentColor 14%, transparent);
-    box-shadow: var(--pv-shadow); transition: transform 200ms cubic-bezier(0.23,1,0.32,1), border-color 200ms;
+    box-shadow: var(--pv-shadow); transition: transform 200ms cubic-bezier(0.23,1,0.32,1);
   }
   .pv-feature-video:hover { border-color: var(--sc-accent); transform: translateY(-2px); }
   .pv-feature-video:active { transform: translateY(0); }
@@ -260,7 +295,7 @@
     background: var(--sc-surface); border-radius: 2px; overflow: hidden;
     border: 1px solid color-mix(in srgb, var(--pv-dark) 12%, transparent);
     box-shadow: var(--pv-shadow);
-    transition: transform 200ms cubic-bezier(0.23,1,0.32,1), border-color 200ms;
+    transition: transform 200ms cubic-bezier(0.23,1,0.32,1);
   }
   .pv-ep:hover { transform: translateY(-3px); border-color: var(--sc-accent); }
   .pv-ep:active { transform: translateY(0); }
@@ -274,8 +309,9 @@
   .pv-ep--lead .pv-ep__title { font-size: 1.1rem; }
   .pv-ep__meta { margin-top: 0.3rem; font-size: 0.76rem; color: var(--sc-ink-soft); }
   .pv-gallery-links { display: flex; gap: 0.7rem; margin-top: 1.8rem; flex-wrap: wrap; }
-  .pv-platform { display: inline-flex; align-items: center; gap: 0.45rem; font-size: 0.84rem; font-weight: 600; color: inherit; text-decoration: none; padding: 0.6rem 1.05rem; border-radius: 999px; border: 1px solid color-mix(in srgb, currentColor 28%, transparent); transition: border-color 180ms, color 180ms; }
+  .pv-platform { display: inline-flex; align-items: center; gap: 0.45rem; font-size: 0.84rem; font-weight: 600; color: inherit; text-decoration: none; padding: 0.6rem 1.05rem; border-radius: 999px; border: 1px solid color-mix(in srgb, currentColor 28%, transparent); transition: transform 180ms; }
   .pv-platform:hover { border-color: var(--pv-rust); color: var(--pv-rust-ink); }
+  .pv-platform:active { transform: translateY(1px); }
 
   /* ---------- section 7: close ---------- */
   /* content-hugging, not a forced full-viewport block: "just tall enough to
@@ -289,7 +325,7 @@
      "real" button and one an afterthought outline */
   .pv-social { display: flex; flex-direction: column; align-items: center; gap: 0.6rem; }
   .pv-social__label { font-size: 0.72rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--sc-ink-soft); }
-  .cta { display: inline-block; font-weight: 700; font-size: 1rem; color: #fbf6ec; background: var(--pv-rust); padding: 1rem 2.1rem; border-radius: 999px; text-decoration: none; transition: transform 180ms cubic-bezier(0.23,1,0.32,1), background 180ms; }
+  .cta { display: inline-block; font-weight: 700; font-size: 1rem; color: #fbf6ec; background: var(--pv-rust); padding: 1rem 2.1rem; border-radius: 999px; text-decoration: none; transition: transform 180ms cubic-bezier(0.23,1,0.32,1); }
   .cta:hover { background: #c4380a; transform: translateY(-1px); }
   .cta:active { transform: translateY(0); }
   .cta--ghost { background: transparent; color: inherit; border: 1px solid color-mix(in srgb, currentColor 32%, transparent); }
@@ -297,6 +333,11 @@
   .foot { margin-top: 1.5rem; padding-top: 0.6rem; width: min(100%, 60rem); border-top: 1px solid color-mix(in srgb, currentColor 14%, transparent); font-size: 0.7rem; color: var(--sc-ink-soft); text-align: center; }
   .pv-footer-link { display: inline-block; margin-left: 0.6rem; color: var(--pv-orange); text-decoration: none; font-weight: 600; }
   .pv-footer-link:hover { text-decoration: underline; }
+  .pv-footer-link:active { opacity: 0.7; }
+  /* the fixed flight-log pill sits bottom-left; below ~1000px the centred
+     footer line runs underneath it at the very end of the page. Clear it
+     there only, so the desktop close stays content-hugging. */
+  @media (max-width: 1000px) { .pv-close { padding-bottom: calc(clamp(1.75rem, 4vh, 2.5rem) + 2.9rem); } }
 
   /* ---------- signature move: the flight log ---------- */
   #pv-flightlog {
@@ -311,7 +352,10 @@
   #pv-flightlog .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--pv-rust); flex: none; }
   #pv-flightlog span[data-role="stamp"] { font-weight: 600; transition: opacity 240ms; }
 
-  @media (prefers-reduced-motion: reduce) { .pv-hero-img img { transition: none !important; } }
+  @media (prefers-reduced-motion: reduce) {
+    .pv-hero-img img { transition: none !important; }
+    .pv-nav-cta, .pv-feature-video, .pv-ep, .pv-platform, .cta { transition: none; }
+  }
 </style>
 </head>
 <body>
@@ -326,7 +370,7 @@
 
 <header class="site-bar">
   <a class="pv-mark" href="#top">
-    <img class="pv-mark__badge" src="assets/podcast-logo.png" alt="" width="302" height="320">
+    <img class="pv-mark__badge" src="assets/podcast-logo-128.png" alt="" width="121" height="128">
     <span class="pv-mark__word">Peter van der Spuy</span>
   </a>
   <nav class="pv-nav" aria-label="Sections">
@@ -346,7 +390,17 @@
   <section data-sc-act="pin" data-sc-span="1.6">
     <div data-sc-stage class="pv-hero-stage">
       <div class="pv-hero-img" data-sc-parallax="-0.3">
-        <img src="assets/hero/edit_v4_preview.jpg" alt="A Gulfstream business jet passing directly overhead as Peter van der Spuy sits astride a custom chopper motorcycle on a dusty airfield at dusk.">
+        <!-- one whole photo, art-directed: portrait screens get a centred square
+             crop of the same frame (cover only ever shows the middle there),
+             landscape gets width-matched sizes. 269vh = 2.49 aspect x 108% box -->
+        <picture>
+          <source media="(max-aspect-ratio: 1/1)" sizes="108vh"
+                  srcset="assets/hero/hero-square-1200.jpg 1200w, assets/hero/hero-square-2000.jpg 2000w, assets/hero/hero-square-2865.jpg 2865w">
+          <img src="assets/hero/hero-3200.jpg" sizes="(min-aspect-ratio: 5/2) 108vw, 269vh"
+               srcset="assets/hero/hero-2000.jpg 2000w, assets/hero/hero-3200.jpg 3200w, assets/hero/hero-4800.jpg 4800w"
+               width="3200" height="1285" fetchpriority="high"
+               alt="A Gulfstream business jet passing directly overhead as Peter van der Spuy sits astride a custom chopper motorcycle on a dusty airfield at dusk.">
+        </picture>
       </div>
       <div class="pv-hero-scrim" aria-hidden="true"></div>
       <div class="pv-hero-copy" data-sc-cue="0 1 0 0">
@@ -415,7 +469,7 @@
         </div>
         <div class="pv-captain-side">
           <figure class="pv-frame pv-captain-photo">
-            <img src="assets/captain/mandela-1993.jpg" alt="Peter van der Spuy with Nelson Mandela and senior ANC leaders in front of a private jet on the apron, 1993.">
+            <img src="assets/captain/mandela-1993.jpg" alt="Peter van der Spuy with Nelson Mandela and senior ANC leaders in front of a private jet on the apron, 1993." width="1136" height="680" loading="lazy" decoding="async">
             <figcaption><b>1993.</b> Still on the wall above his desk.</figcaption>
           </figure>
           <aside class="pv-roll">
@@ -432,23 +486,23 @@
 
       <div class="pv-photo-grid">
         <figure class="pv-frame pv-photo--lead">
-          <img src="assets/captain/jet-mountains.jpg" alt="A Gulfstream on final approach against a backdrop of snow-capped mountains.">
+          <img src="assets/captain/jet-mountains.jpg" alt="A Gulfstream on final approach against a backdrop of snow-capped mountains." width="1600" height="1199" loading="lazy" decoding="async">
           <figcaption><b>On final approach.</b></figcaption>
         </figure>
         <figure class="pv-frame pv-photo--tall">
-          <img src="assets/captain/cockpit-instruments.jpg" alt="Peter at the controls of a Gulfstream, instrument panel and glass cockpit displays visible.">
+          <img src="assets/captain/cockpit-instruments.jpg" alt="Peter at the controls of a Gulfstream, instrument panel and glass cockpit displays visible." width="768" height="1024" loading="lazy" decoding="async">
           <figcaption><b>At the controls.</b></figcaption>
         </figure>
         <figure class="pv-frame">
-          <img src="assets/captain/jet-headon.jpg" alt="A Gulfstream business jet parked nose-on, engines and wings spread.">
+          <img src="assets/captain/jet-headon.jpg" alt="A Gulfstream business jet parked nose-on, engines and wings spread." width="1133" height="693" loading="lazy" decoding="async">
           <figcaption><b>Pre-flight.</b> Nose to the camera.</figcaption>
         </figure>
         <figure class="pv-frame">
-          <img src="assets/captain/cockpit-smile.jpg" alt="Peter smiling at the controls of a Gulfstream cockpit.">
+          <img src="assets/captain/cockpit-smile.jpg" alt="Peter smiling at the controls of a Gulfstream cockpit." width="1024" height="768" loading="lazy" decoding="async">
           <figcaption><b>In the seat.</b></figcaption>
         </figure>
         <figure class="pv-frame">
-          <img src="assets/captain/crew-group.jpg" alt="Peter and two fellow pilots in headsets, packed into the cockpit for a group photo.">
+          <img src="assets/captain/crew-group.jpg" alt="Peter and two fellow pilots in headsets, packed into the cockpit for a group photo." width="1024" height="768" loading="lazy" decoding="async">
           <figcaption><b>The flight deck.</b> A three-pilot crew.</figcaption>
         </figure>
       </div>
@@ -511,75 +565,75 @@
 
         <div class="pv-photo-grid">
           <figure class="pv-frame pv-photo--lead">
-            <img src="assets/porsche/lead-mountain-road.jpg" alt="Peter's Martini-liveried Porsche racing along a mountain road, motion blur on the wheels.">
+            <img src="assets/porsche/lead-mountain-road.jpg" alt="Peter's Martini-liveried Porsche racing along a mountain road, motion blur on the wheels." width="2000" height="1331" loading="lazy" decoding="async">
             <figcaption><b>On the road.</b> The Martini-liveried 911, mid-corner.</figcaption>
           </figure>
           <figure class="pv-frame pv-photo--tall">
-            <img src="assets/porsche/trophy-helmet-roof.jpg" alt="Peter leaning on the roof of his Martini Racing Porsche, trophy and helmet resting on top.">
+            <img src="assets/porsche/trophy-helmet-roof.jpg" alt="Peter leaning on the roof of his Martini Racing Porsche, trophy and helmet resting on top." width="733" height="769" loading="lazy" decoding="async">
             <figcaption><b>Race day.</b> Trophy and helmet on the roof.</figcaption>
           </figure>
           <figure class="pv-frame">
-            <img src="assets/porsche/simola-hillclimb-action.jpg" alt="A Porsche racing up the Jaguar Simola Hillclimb course.">
+            <img src="assets/porsche/simola-hillclimb-action.jpg" alt="A Porsche racing up the Jaguar Simola Hillclimb course." width="960" height="720" loading="lazy" decoding="async">
             <figcaption><b>Simola Hillclimb.</b></figcaption>
           </figure>
           <figure class="pv-frame">
-            <img src="assets/porsche/on-track-1.jpg" alt="Peter's Martini Racing Porsche cornering on a hillclimb road, trees lining the route.">
+            <img src="assets/porsche/on-track-1.jpg" alt="Peter's Martini Racing Porsche cornering on a hillclimb road, trees lining the route." width="1024" height="683" loading="lazy" decoding="async">
             <figcaption><b>On track.</b></figcaption>
           </figure>
           <figure class="pv-frame">
-            <img src="assets/porsche/nose-to-nose.jpg" alt="Two Martini-liveried Porsches racing nose to nose on track.">
+            <img src="assets/porsche/nose-to-nose.jpg" alt="Two Martini-liveried Porsches racing nose to nose on track." width="1654" height="900" loading="lazy" decoding="async">
             <figcaption><b>Nose to nose.</b></figcaption>
           </figure>
           <figure class="pv-frame">
-            <img src="assets/porsche/on-display.jpg" alt="A Martini-liveried Porsche on static display behind rope stanchions at a club event.">
+            <img src="assets/porsche/on-display.jpg" alt="A Martini-liveried Porsche on static display behind rope stanchions at a club event." width="960" height="625" loading="lazy" decoding="async">
             <figcaption><b>On display.</b></figcaption>
           </figure>
           <figure class="pv-frame">
-            <img src="assets/porsche/celebrating.jpg" alt="Peter and a friend toasting with champagne beside the Martini Racing Porsche in the pit garage.">
+            <img src="assets/porsche/celebrating.jpg" alt="Peter and a friend toasting with champagne beside the Martini Racing Porsche in the pit garage." width="1333" height="1000" loading="lazy" decoding="async">
             <figcaption><b>Celebrating a result.</b></figcaption>
           </figure>
           <figure class="pv-frame">
-            <img src="assets/porsche/in-the-paddock.jpg" alt="A group gathered around a Porsche 935 in a dimly lit paddock garage.">
+            <img src="assets/porsche/in-the-paddock.jpg" alt="A group gathered around a Porsche 935 in a dimly lit paddock garage." width="1500" height="1000" loading="lazy" decoding="async">
             <figcaption><b>In the paddock.</b></figcaption>
           </figure>
           <figure class="pv-frame">
-            <img src="assets/porsche/club-racing.jpg" alt="Modern Porsche GT3 Cup cars racing nose to tail on a club racing grid.">
+            <img src="assets/porsche/club-racing.jpg" alt="Modern Porsche GT3 Cup cars racing nose to tail on a club racing grid." width="1500" height="1000" loading="lazy" decoding="async">
             <figcaption><b>Club racing.</b></figcaption>
           </figure>
           <figure class="pv-frame">
-            <img src="assets/porsche/giving-chase.jpg" alt="Peter's Martini Racing Porsche chasing another car through a corner.">
+            <img src="assets/porsche/giving-chase.jpg" alt="Peter's Martini Racing Porsche chasing another car through a corner." width="1125" height="779" loading="lazy" decoding="async">
             <figcaption><b>Giving chase.</b></figcaption>
           </figure>
           <figure class="pv-frame">
-            <img src="assets/porsche/post-race-duo.jpg" alt="Peter and a fellow driver posing beside a blue Porsche after a race.">
+            <img src="assets/porsche/post-race-duo.jpg" alt="Peter and a fellow driver posing beside a blue Porsche after a race." width="1333" height="1000" loading="lazy" decoding="async">
             <figcaption><b>Post-race.</b> Peter and a fellow driver.</figcaption>
           </figure>
-          <figure class="pv-frame">
-            <img src="assets/porsche/friends-trackside.jpg" alt="Peter with three friends trackside, one in an orange racing suit.">
+          <figure class="pv-frame pv-photo--full">
+            <img src="assets/porsche/friends-trackside.jpg" alt="Peter with three friends trackside, one in an orange racing suit." width="2000" height="1056" loading="lazy" decoding="async">
             <figcaption><b>With friends at the track.</b></figcaption>
           </figure>
           <figure class="pv-frame">
-            <img src="assets/porsche/event-day.jpg" alt="The Martini Racing Porsche on display under an event tent.">
+            <img src="assets/porsche/event-day.jpg" alt="The Martini Racing Porsche on display under an event tent." width="1494" height="1000" loading="lazy" decoding="async">
             <figcaption><b>Event day.</b></figcaption>
           </figure>
           <figure class="pv-frame">
-            <img src="assets/porsche/in-the-pits.jpg" alt="Close nose-on view of the Martini Racing Porsche in the pit lane.">
+            <img src="assets/porsche/in-the-pits.jpg" alt="Close nose-on view of the Martini Racing Porsche in the pit lane." width="1280" height="853" loading="lazy" decoding="async">
             <figcaption><b>In the pits.</b></figcaption>
           </figure>
           <figure class="pv-frame">
-            <img src="assets/porsche/on-the-move.jpg" alt="The Martini-liveried Porsche driving fast along a coastal road under a cloudy sky.">
+            <img src="assets/porsche/on-the-move.jpg" alt="The Martini-liveried Porsche driving fast along a coastal road under a cloudy sky." width="1222" height="867" loading="lazy" decoding="async">
             <figcaption><b>On the move.</b></figcaption>
           </figure>
           <figure class="pv-frame">
-            <img src="assets/porsche/simola-podium.jpg" alt="A podium presentation at the Jaguar Simola Hillclimb, trophy being handed over.">
+            <img src="assets/porsche/simola-podium.jpg" alt="A podium presentation at the Jaguar Simola Hillclimb, trophy being handed over." width="1024" height="576" loading="lazy" decoding="async">
             <figcaption><b>Simola Hillclimb.</b> Podium.</figcaption>
           </figure>
           <figure class="pv-frame">
-            <img src="assets/porsche/trophy-shelf.jpg" alt="A shelf of Porsche trophies and a Porsche crest plaque.">
+            <img src="assets/porsche/trophy-shelf.jpg" alt="A shelf of Porsche trophies and a Porsche crest plaque." width="1546" height="1000" loading="lazy" decoding="async">
             <figcaption><b>The trophy shelf.</b></figcaption>
           </figure>
           <figure class="pv-frame">
-            <img src="assets/porsche/club-dinner.jpg" alt="Peter and a companion at a Porsche Club dinner event.">
+            <img src="assets/porsche/club-dinner.jpg" alt="Peter and a companion at a Porsche Club dinner event." width="1280" height="960" loading="lazy" decoding="async">
             <figcaption><b>Porsche Club dinner.</b></figcaption>
           </figure>
         </div>
@@ -592,7 +646,10 @@
   <!-- 4 · ENDURANCE (dark) -->
   <section class="sc-section pv-dark-block" id="endurance">
     <div class="sc-wrap" style="position:relative;">
-      <svg class="pv-motif pv-motif--circuit" style="left:-8%; top:50%; transform:translateY(-50%);" viewBox="0 0 560 360" aria-hidden="true">
+      <!-- the motifs centre on the text + video block only: centred on the
+           whole wrap they slid behind the gallery once it was added -->
+      <div style="position:relative;">
+      <svg class="pv-motif pv-motif--circuit" viewBox="0 0 560 360" aria-hidden="true">
         <!-- an evocation of Kyalami's flow (long straight, sweeping esses, a
              tight infield complex), not a surveyed trace of the real circuit.
              Rhumb-line compass rose echoes the aged-chart treatment on the
@@ -626,7 +683,7 @@
         <text x="80" y="344" font-family="Archivo" font-weight="900" font-size="26" letter-spacing="3" fill="var(--pv-orange)">KYALAMI</text>
         <text x="296" y="344" font-family="Archivo" font-weight="700" font-size="18" letter-spacing="2" fill="var(--pv-orange)">9HR</text>
       </svg>
-      <svg class="pv-motif pv-motif--podium" style="right:1%; bottom:-8%;" viewBox="0 0 220 160" aria-hidden="true">
+      <svg class="pv-motif pv-motif--podium" style="right:2%; top:-6%;" viewBox="0 0 220 160" aria-hidden="true">
         <g stroke="var(--pv-orange)" stroke-width="1.4" fill="none">
           <rect x="10" y="70" width="52" height="80"/>
           <rect x="72" y="30" width="52" height="120"/>
@@ -648,7 +705,7 @@
             <div><div class="pv-stat__num">P3</div><div class="pv-stat__label">Class A, 2023 season</div></div>
             <div><div class="pv-stat__num">3</div><div class="pv-stat__label">drivers, one privateer car</div></div>
           </div>
-          <svg class="pv-motif pv-motif--flag" style="left:2%; bottom:-14%;" viewBox="0 0 140 100" aria-hidden="true">
+          <svg class="pv-motif pv-motif--flag" style="right:-3%; bottom:0;" viewBox="0 0 140 100" aria-hidden="true">
             <line x1="14" y1="10" x2="14" y2="90" stroke="var(--pv-orange)" stroke-width="2"/>
             <g stroke="var(--pv-orange)" stroke-width="1">
               <rect x="14" y="10" width="14" height="14" fill="var(--pv-orange)" opacity="0.6"/>
@@ -663,7 +720,7 @@
         </div>
         <a class="pv-feature-video" href="https://www.youtube.com/watch?v=Qmkreklvnpc" target="_blank" rel="noopener">
           <div class="pv-feature-video__thumb">
-            <img src="https://i.ytimg.com/vi/Qmkreklvnpc/hqdefault.jpg" alt="" loading="lazy">
+            <img src="https://i.ytimg.com/vi/Qmkreklvnpc/maxresdefault.jpg" alt="" loading="lazy" width="1280" height="720" decoding="async">
             <span class="pv-ep__dur">7:53</span>
             <span class="pv-ep__play" aria-hidden="true">▶</span>
           </div>
@@ -674,29 +731,31 @@
         </a>
       </div>
 
+      </div>
+
       <div class="pv-photo-grid">
         <figure class="pv-frame pv-photo--lead">
-          <img src="assets/endurance/lead-track-action.jpg" alt="The Dolphin Engineering Juno SS3 racing wheel to wheel with other cars at Kyalami.">
+          <img src="assets/endurance/lead-track-action.jpg" alt="The Dolphin Engineering Juno SS3 racing wheel to wheel with other cars at Kyalami." width="2000" height="1333" loading="lazy" decoding="async">
           <figcaption><b>Nine hours at Kyalami.</b> The Juno SS3 in the pack.</figcaption>
         </figure>
         <figure class="pv-frame pv-photo--tall">
-          <img src="assets/endurance/race-face.jpg" alt="Peter in helmet and race suit in the cockpit of the Juno SS3, Dolphin Racing branding visible.">
+          <img src="assets/endurance/race-face.jpg" alt="Peter in helmet and race suit in the cockpit of the Juno SS3, Dolphin Racing branding visible." width="1000" height="1250" loading="lazy" decoding="async">
           <figcaption><b>Race face.</b></figcaption>
         </figure>
         <figure class="pv-frame pv-photo--tall">
-          <img src="assets/endurance/peter-byron-trophy.jpg" alt="Peter and Byron Mitchell posing together with a trophy at the race weekend.">
+          <img src="assets/endurance/peter-byron-trophy.jpg" alt="Peter and Byron Mitchell posing together with a trophy at the race weekend." width="1000" height="1333" loading="lazy" decoding="async">
           <figcaption><b>Peter and Byron Mitchell.</b> Team Dolphin Engineering.</figcaption>
         </figure>
-        <figure class="pv-frame pv-photo--wide">
-          <img src="assets/endurance/pit-stop.jpg" alt="The Dolphin Engineering pit crew working on the Juno SS3 during a pit stop.">
+        <figure class="pv-frame pv-photo--full">
+          <img src="assets/endurance/pit-stop.jpg" alt="The Dolphin Engineering pit crew working on the Juno SS3 during a pit stop." width="1500" height="1000" loading="lazy" decoding="async">
           <figcaption><b>Pit stop.</b> The crew at work.</figcaption>
         </figure>
         <figure class="pv-frame pv-photo--tall">
-          <img src="assets/endurance/on-track.jpg" alt="The Juno SS3 leading another car through a corner at Kyalami.">
+          <img src="assets/endurance/on-track.jpg" alt="The Juno SS3 leading another car through a corner at Kyalami." width="1500" height="1000" loading="lazy" decoding="async">
           <figcaption><b>On track.</b> The Juno SS3.</figcaption>
         </figure>
         <figure class="pv-frame pv-photo--tall">
-          <img src="assets/endurance/post-race.jpg" alt="Peter and Byron Mitchell kneeling beside the Juno SS3 after the race.">
+          <img src="assets/endurance/post-race.jpg" alt="Peter and Byron Mitchell kneeling beside the Juno SS3 after the race." width="1280" height="960" loading="lazy" decoding="async">
           <figcaption><b>Post-race.</b></figcaption>
         </figure>
       </div>
@@ -738,7 +797,7 @@
         <path d="M95,136 L104,150 L95,164 L86,150 Z" stroke="var(--pv-olive)" stroke-width="1.2" fill="var(--pv-cream)"/>
         <circle cx="95" cy="150" r="2.5" fill="var(--pv-olive)"/>
         <text x="195" y="348" font-family="Archivo" font-weight="900" font-size="18" letter-spacing="3" fill="var(--pv-olive)">ZIMBABWE</text>
-        <text x="52" y="348" font-family="Archivo" font-weight="700" font-size="12" letter-spacing="2" fill="var(--pv-olive)">BOTSWANA</text>
+        <text x="104" y="349" font-family="Archivo" font-weight="700" font-size="12" letter-spacing="2" fill="var(--pv-olive)">BOTSWANA</text>
         <text x="150" y="400" font-family="Archivo" font-weight="700" font-size="13" letter-spacing="2" fill="var(--pv-rust)">SOUTH AFRICA</text>
       </svg>
       <svg class="pv-motif pv-motif--lamps" style="left:-2%; top:-4%;" viewBox="0 0 260 120" aria-hidden="true">
@@ -751,7 +810,7 @@
 
       <p class="pv-eyebrow" style="position:relative; z-index:1;">The Safari Projek</p>
       <figure class="pv-frame pv-safari-photo" data-sc-reveal="up" data-sc-reveal-at="0.08 0.5">
-        <img src="assets/safari/safari-saltpan-hero.jpg" alt="The Camel Safari Porsche 911 in cream and blue livery, roof rack and spare wheel mounted, standing alone on a vast salt pan under a dramatic cloudy sky.">
+        <img src="assets/safari/safari-saltpan-hero.jpg" alt="The Camel Safari Porsche 911 in cream and blue livery, roof rack and spare wheel mounted, standing alone on a vast salt pan under a dramatic cloudy sky." width="1130" height="635" loading="lazy" decoding="async">
         <figcaption><b>Camel Safari Projek.</b> Nothing for miles in any direction.</figcaption>
       </figure>
 
@@ -767,7 +826,7 @@
 
   <section class="sc-section pv-cream-deep">
     <div class="sc-wrap" style="position:relative;">
-      <svg class="pv-motif pv-motif--rack" style="left:-6%; top:6%;" viewBox="0 0 320 220" aria-hidden="true">
+      <svg class="pv-motif pv-motif--rack" style="right:-2%; top:-3.5rem; width:min(30vw, 360px);" viewBox="0 0 320 220" aria-hidden="true">
         <g stroke="var(--pv-dark)" stroke-width="1.3" fill="none">
           <rect x="10" y="20" width="300" height="170" rx="14"/>
           <path d="M10 55 H310 M10 90 H310 M10 125 H310 M10 160 H310"/>
@@ -783,35 +842,35 @@
       </div>
       <div class="pv-photo-grid">
         <figure class="pv-frame pv-photo--lead">
-          <img src="assets/safari/safari-rear-beach.jpg" alt="Rear view of the Camel Safari Porsche 911 on a sand flat by the sea, roof rack carrying a spare wheel, Camel and Turbo badging across the tail.">
+          <img src="assets/safari/safari-rear-beach.jpg" alt="Rear view of the Camel Safari Porsche 911 on a sand flat by the sea, roof rack carrying a spare wheel, Camel and Turbo badging across the tail." width="1127" height="632" loading="lazy" decoding="async">
           <figcaption><b>The build.</b> Rack, spare, mud flaps.</figcaption>
         </figure>
         <figure class="pv-frame pv-photo--tall">
-          <img src="assets/safari/rally-elephants.jpg" alt="Peter's rally-liveried Porsche 911 in Falken Motorsport colours parked on a bush track, with elephants standing behind it.">
+          <img src="assets/safari/rally-elephants.jpg" alt="Peter's rally-liveried Porsche 911 in Falken Motorsport colours parked on a bush track, with elephants standing behind it." width="360" height="640" loading="lazy" decoding="async">
           <figcaption><b>On route.</b> The locals came to look.</figcaption>
         </figure>
         <figure class="pv-frame pv-photo--tall">
-          <img src="assets/safari/rally-rear-dusk.jpg" alt="Rear three-quarter of the Camel Safari Porsche 911 at dusk, roof rack and spare wheels mounted, expedition crest on the rear wing.">
+          <img src="assets/safari/rally-rear-dusk.jpg" alt="Rear three-quarter of the Camel Safari Porsche 911 at dusk, roof rack and spare wheels mounted, expedition crest on the rear wing." width="360" height="640" loading="lazy" decoding="async">
           <figcaption><b>Dusk.</b> Crest, rack, dust.</figcaption>
         </figure>
         <figure class="pv-frame pv-photo--tall">
-          <img src="assets/safari/rally-aloes.jpg" alt="Rally Porsches parked in a line behind desert aloe plants, car number 18 visible.">
+          <img src="assets/safari/rally-aloes.jpg" alt="Rally Porsches parked in a line behind desert aloe plants, car number 18 visible." width="361" height="640" loading="lazy" decoding="async">
           <figcaption><b>Staging.</b> Aloes and start numbers.</figcaption>
         </figure>
         <figure class="pv-frame pv-photo--tall">
-          <img src="assets/safari/rally-convoy.jpg" alt="A line of rally-prepared Porsches parked on gravel at sunrise with crews standing alongside.">
+          <img src="assets/safari/rally-convoy.jpg" alt="A line of rally-prepared Porsches parked on gravel at sunrise with crews standing alongside." width="360" height="640" loading="lazy" decoding="async">
           <figcaption><b>The convoy.</b> First light.</figcaption>
         </figure>
         <figure class="pv-frame pv-photo--tall">
-          <img src="assets/safari/cheetah.jpg" alt="A cheetah sitting alert in dry grass under a thorn tree.">
+          <img src="assets/safari/cheetah.jpg" alt="A cheetah sitting alert in dry grass under a thorn tree." width="361" height="640" loading="lazy" decoding="async">
           <figcaption><b>Conservation.</b> "Cold and rainy, but we got rewarded."</figcaption>
         </figure>
         <figure class="pv-frame pv-photo--tall">
-          <img src="assets/safari/peter-pathfinder.jpg" alt="Peter van der Spuy in a wide-brimmed bush hat and blue sunglasses, wearing a Camelthorn Pathfinders expedition jacket.">
+          <img src="assets/safari/peter-pathfinder.jpg" alt="Peter van der Spuy in a wide-brimmed bush hat and blue sunglasses, wearing a Camelthorn Pathfinders expedition jacket." width="360" height="640" loading="lazy" decoding="async">
           <figcaption><b>Camelthorn Pathfinders.</b> The driver.</figcaption>
         </figure>
         <figure class="pv-frame pv-photo--tall">
-          <img src="assets/safari/peter-grandtour.jpg" alt="Peter at the wheel in a Safari Porsche Grand Tour shirt and cap, sunlight through the windscreen.">
+          <img src="assets/safari/peter-grandtour.jpg" alt="Peter at the wheel in a Safari Porsche Grand Tour shirt and cap, sunlight through the windscreen." width="360" height="640" loading="lazy" decoding="async">
           <figcaption><b>Behind the wheel.</b> Safari Porsche, the grand tour.</figcaption>
         </figure>
       </div>
@@ -867,35 +926,35 @@
 
       <div class="pv-gallery-grid">
         <a class="pv-ep pv-ep--lead" href="https://www.youtube.com/watch?v=DXFNS0AAsTA" target="_blank" rel="noopener">
-          <div class="pv-ep__thumb"><img src="https://i.ytimg.com/vi/DXFNS0AAsTA/hqdefault.jpg" alt="" loading="lazy"><span class="pv-ep__dur">55:18</span><span class="pv-ep__play" aria-hidden="true">▶</span></div>
+          <div class="pv-ep__thumb"><img src="https://i.ytimg.com/vi/DXFNS0AAsTA/maxresdefault.jpg" alt="" loading="lazy" width="1280" height="720" decoding="async"><span class="pv-ep__dur">55:18</span><span class="pv-ep__play" aria-hidden="true">▶</span></div>
           <div class="pv-ep__body"><div class="pv-ep__title">The Camel Safari Porsche Projek: Africa's wildest Porsche 911 build</div><div class="pv-ep__meta">The story of the car, from Peter</div></div>
         </a>
         <a class="pv-ep" href="https://www.youtube.com/watch?v=qV_ueFgYQKI" target="_blank" rel="noopener">
-          <div class="pv-ep__thumb"><img src="https://i.ytimg.com/vi/qV_ueFgYQKI/hqdefault.jpg" alt="" loading="lazy"><span class="pv-ep__dur">48:56</span><span class="pv-ep__play" aria-hidden="true">▶</span></div>
+          <div class="pv-ep__thumb"><img src="https://i.ytimg.com/vi/qV_ueFgYQKI/sddefault.jpg" alt="" loading="lazy" width="640" height="480" decoding="async"><span class="pv-ep__dur">48:56</span><span class="pv-ep__play" aria-hidden="true">▶</span></div>
           <div class="pv-ep__body"><div class="pv-ep__title">We took a Porsche where it should never go</div><div class="pv-ep__meta">Camel Safari Projek, on the road</div></div>
         </a>
         <a class="pv-ep" href="https://www.youtube.com/watch?v=ErCS3GS_nQ0" target="_blank" rel="noopener">
-          <div class="pv-ep__thumb"><img src="https://i.ytimg.com/vi/ErCS3GS_nQ0/hqdefault.jpg" alt="" loading="lazy"><span class="pv-ep__dur">52:52</span><span class="pv-ep__play" aria-hidden="true">▶</span></div>
+          <div class="pv-ep__thumb"><img src="https://i.ytimg.com/vi/ErCS3GS_nQ0/sddefault.jpg" alt="" loading="lazy" width="640" height="480" decoding="async"><span class="pv-ep__dur">52:52</span><span class="pv-ep__play" aria-hidden="true">▶</span></div>
           <div class="pv-ep__body"><div class="pv-ep__title">Chasing lions and adventures in the African bush, part one</div><div class="pv-ep__meta">with Robert Hofmeyer and The Missfits</div></div>
         </a>
         <a class="pv-ep" href="https://www.youtube.com/watch?v=m0VyfxJ38S4" target="_blank" rel="noopener">
-          <div class="pv-ep__thumb"><img src="https://i.ytimg.com/vi/m0VyfxJ38S4/hqdefault.jpg" alt="" loading="lazy"><span class="pv-ep__dur">1:40:45</span><span class="pv-ep__play" aria-hidden="true">▶</span></div>
+          <div class="pv-ep__thumb"><img src="https://i.ytimg.com/vi/m0VyfxJ38S4/sddefault.jpg" alt="" loading="lazy" width="640" height="480" decoding="async"><span class="pv-ep__dur">1:40:45</span><span class="pv-ep__play" aria-hidden="true">▶</span></div>
           <div class="pv-ep__body"><div class="pv-ep__title">Inside the world of billionaire jets, FedEx and Gulfstreams</div><div class="pv-ep__meta">with Basham Johnson</div></div>
         </a>
         <a class="pv-ep" href="https://www.youtube.com/watch?v=4tD27JKmzEk" target="_blank" rel="noopener">
-          <div class="pv-ep__thumb"><img src="https://i.ytimg.com/vi/4tD27JKmzEk/hqdefault.jpg" alt="" loading="lazy"><span class="pv-ep__dur">2:26:52</span><span class="pv-ep__play" aria-hidden="true">▶</span></div>
+          <div class="pv-ep__thumb"><img src="https://i.ytimg.com/vi/4tD27JKmzEk/sddefault.jpg" alt="" loading="lazy" width="640" height="480" decoding="async"><span class="pv-ep__dur">2:26:52</span><span class="pv-ep__play" aria-hidden="true">▶</span></div>
           <div class="pv-ep__body"><div class="pv-ep__title">Endurance racing, business and high performance</div><div class="pv-ep__meta">with Nick Adcock</div></div>
         </a>
         <a class="pv-ep" href="https://www.youtube.com/watch?v=aE5_5u5bApM" target="_blank" rel="noopener">
-          <div class="pv-ep__thumb"><img src="https://i.ytimg.com/vi/aE5_5u5bApM/hqdefault.jpg" alt="" loading="lazy"><span class="pv-ep__dur">54:03</span><span class="pv-ep__play" aria-hidden="true">▶</span></div>
+          <div class="pv-ep__thumb"><img src="https://i.ytimg.com/vi/aE5_5u5bApM/sddefault.jpg" alt="" loading="lazy" width="640" height="480" decoding="async"><span class="pv-ep__dur">54:03</span><span class="pv-ep__play" aria-hidden="true">▶</span></div>
           <div class="pv-ep__body"><div class="pv-ep__title">Inside the rivalry: Sarel van der Merwe and Ian Scheckter, unfiltered</div><div class="pv-ep__meta">Two legends, one studio</div></div>
         </a>
         <a class="pv-ep" href="https://www.youtube.com/watch?v=Xc4vrscvmJs" target="_blank" rel="noopener">
-          <div class="pv-ep__thumb"><img src="https://i.ytimg.com/vi/Xc4vrscvmJs/hqdefault.jpg" alt="" loading="lazy"><span class="pv-ep__dur">2:04:28</span><span class="pv-ep__play" aria-hidden="true">▶</span></div>
+          <div class="pv-ep__thumb"><img src="https://i.ytimg.com/vi/Xc4vrscvmJs/sddefault.jpg" alt="" loading="lazy" width="640" height="480" decoding="async"><span class="pv-ep__dur">2:04:28</span><span class="pv-ep__play" aria-hidden="true">▶</span></div>
           <div class="pv-ep__body"><div class="pv-ep__title">From the bush to the battle for wildlife: conservation stories from Africa</div><div class="pv-ep__meta">with Simon Borchett</div></div>
         </a>
         <a class="pv-ep" href="https://www.youtube.com/watch?v=AvwwZaGeIks" target="_blank" rel="noopener">
-          <div class="pv-ep__thumb"><img src="https://i.ytimg.com/vi/AvwwZaGeIks/hqdefault.jpg" alt="" loading="lazy"><span class="pv-ep__dur">1:51:08</span><span class="pv-ep__play" aria-hidden="true">▶</span></div>
+          <div class="pv-ep__thumb"><img src="https://i.ytimg.com/vi/AvwwZaGeIks/sddefault.jpg" alt="" loading="lazy" width="640" height="480" decoding="async"><span class="pv-ep__dur">1:51:08</span><span class="pv-ep__play" aria-hidden="true">▶</span></div>
           <div class="pv-ep__body"><div class="pv-ep__title">From fast jets to frontline warfare and journalism</div><div class="pv-ep__meta">with Mikey Kay</div></div>
         </a>
       </div>
@@ -911,7 +970,7 @@
   <section class="pv-dark-block" id="follow">
     <div class="pv-close">
       <p>He's not done yet.</p>
-      <h2 class="sc-display pv-h2">Follow where he flies, drives and drifts next.</h2>
+      <h2 class="sc-display pv-h2">Follow where he flies, drives and thrives next.</h2>
       <div class="pv-close-links">
         <div class="pv-social">
           <a class="cta" href="https://www.instagram.com/peter_vd_spuy/" target="_blank" rel="noopener">Follow @peter_vd_spuy</a>

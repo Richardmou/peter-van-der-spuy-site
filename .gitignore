@@ -9,6 +9,10 @@
 temporary screenshots/
 .playwright-mcp/
 
+# full-resolution backups of photos resized for the web (the originals are
+# already in git history, commit c411492 and earlier)
+**/assets/_originals/
+
 # dev server logs
 **/server.log
 *.log

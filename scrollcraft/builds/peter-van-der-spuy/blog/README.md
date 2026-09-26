@@ -27,8 +27,14 @@ one `.html` file that shares `blog.css` with the listing page.
    necessarily the date the episode aired (we don't always know that from
    the transcript alone, and the site's content rule is never invent a
    date). Update both `datePublished` and `dateModified` in the JSON-LD.
-6. **Add the post to `index.html`** (the blog listing) as a new `.db-entry`,
-   and to `../sitemap.xml`.
+6. **Add the post to `index.html`** (the blog listing) as a new `.db-row`
+   under "More episodes" (`.db-entry` is only for the two featured stories at
+   the top), and to `../sitemap.xml`. Then relink the chain: every post's
+   `.db-post-foot` has Previous / More from the podcast / Next pills in
+   blog-index order, so update the new post's neighbours too.
+6a. **Give every `<img>` `width`/`height`** (the real file dimensions) and,
+   below the post hero, `loading="lazy" decoding="async"`. Spell in
+   British/SA English (colour, tyre, metre, licence, organise).
 7. **No em dashes, no middle-dot strings, one type family (Archivo).**
    Same rules as the rest of the site (`../CLAUDE.md`). Check with
    `grep -c '—' <file>` before shipping.

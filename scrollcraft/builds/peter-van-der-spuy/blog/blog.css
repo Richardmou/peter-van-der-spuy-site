@@ -37,7 +37,9 @@ body {
   padding-top: 80px;
 }
 
-img { max-width: 100%; display: block; }
+/* height:auto because every <img> carries width/height attributes (space
+   reserved, no layout shift); without it the height attribute would win */
+img { max-width: 100%; height: auto; display: block; }
 
 a { color: inherit; }
 
@@ -70,17 +72,29 @@ a:focus-visible, button:focus-visible {
 .pv-mark { display: flex; align-items: center; gap: 0.6rem; color: var(--pv-dark); text-decoration: none; flex: none; }
 .pv-mark__badge { width: 42px; height: 42px; flex: none; object-fit: contain; }
 .pv-mark__word { font-weight: 900; font-size: 0.85rem; letter-spacing: 0.03em; text-transform: uppercase; }
+.pv-mark:hover .pv-mark__word { color: var(--pv-rust-ink); }
+.pv-mark:active { opacity: 0.75; }
 .pv-nav { display: flex; gap: clamp(0.9rem, 2vw, 1.6rem); margin-inline: auto; }
-.pv-nav a { font-size: 0.82rem; font-weight: 500; color: var(--pv-ink-soft); text-decoration: none; padding: 0.3rem 0; border-bottom: 1px solid transparent; transition: color 180ms, border-color 180ms; }
+.pv-nav a { font-size: 0.82rem; font-weight: 500; color: var(--pv-ink-soft); text-decoration: none; padding: 0.3rem 0; border-bottom: 1px solid transparent; }
 .pv-nav a:hover, .pv-nav a[aria-current="page"] { color: var(--pv-dark); border-color: var(--pv-rust); }
+.pv-nav a:active { color: var(--pv-rust-ink); }
 .pv-nav-cta {
   font-size: 0.78rem; font-weight: 600; letter-spacing: 0.02em; flex: none;
   color: var(--pv-cream); background: var(--pv-rust); text-decoration: none;
-  padding: 0.5rem 1rem; border-radius: 999px; transition: background 180ms, transform 180ms;
+  padding: 0.5rem 1rem; border-radius: 999px; transition: transform 180ms;
 }
 .pv-nav-cta:hover { background: #8c2706; }
 .pv-nav-cta:active { transform: translateY(1px); }
 @media (max-width: 760px) { .pv-nav { display: none; } }
+/* with the section nav hidden, badge + wordmark + CTA outgrow a 390px
+   phone; let the wordmark wrap and tighten the CTA (same as index.html) */
+@media (max-width: 480px) {
+  .site-bar { gap: 0.75rem; }
+  .pv-mark { flex: 0 1 auto; min-width: 0; gap: 0.5rem; }
+  .pv-mark__badge { width: 36px; height: 36px; }
+  .pv-mark__word { font-size: 0.74rem; line-height: 1.1; }
+  .pv-nav-cta { padding: 0.5rem 0.85rem; }
+}
 
 /* ---------- decorative background motifs ----------
    Reuses the same hand-authored line-art system as the main site
@@ -206,6 +220,7 @@ a:focus-visible, button:focus-visible {
 }
 .db-entry__title a { text-decoration: none; color: var(--pv-dark); }
 .db-entry__title a:hover { color: var(--pv-rust); }
+.db-entry__title a:active { color: var(--pv-rust-ink); }
 
 .db-entry__dek {
   font-size: 1.02rem;
@@ -247,6 +262,7 @@ a:focus-visible, button:focus-visible {
   transition: opacity 180ms;
 }
 .db-row:hover { opacity: 0.72; }
+.db-row:active { opacity: 0.55; }
 .db-row__kicker {
   font-size: 0.7rem;
   font-weight: 600;
@@ -291,9 +307,10 @@ a:focus-visible, button:focus-visible {
   padding: 0.6rem 1.1rem;
   border-radius: 999px;
   border: 1px solid color-mix(in srgb, var(--pv-rust) 45%, transparent);
-  transition: background 180ms, color 180ms;
+  transition: transform 180ms;
 }
 .db-pill:hover { background: var(--pv-rust); color: var(--pv-cream); }
+.db-pill:active { transform: translateY(1px); }
 
 /* ---------- post page ---------- */
 
@@ -329,6 +346,7 @@ a:focus-visible, button:focus-visible {
 }
 .db-byline a { color: var(--pv-rust); text-decoration: none; }
 .db-byline a:hover { text-decoration: underline; }
+.db-byline a:active { opacity: 0.7; }
 
 .db-post-hero {
   margin-bottom: clamp(1.75rem, 4vw, 2.75rem);
@@ -428,6 +446,52 @@ a:focus-visible, button:focus-visible {
 }
 .db-foot a { color: var(--pv-rust); text-decoration: none; }
 .db-foot a:hover { text-decoration: underline; }
+.db-foot a:active { opacity: 0.7; }
+
+/* ---------- follow/close footer (ported from the main site's .pv-close,
+   scaled down: this repeats on 20 pages, so it needs to read as a
+   footer, not a second hero) ---------- */
+.db-follow {
+  --db-follow-ink: #f3ece0;
+  --db-follow-ink-soft: #b3a695;
+  background: var(--pv-dark);
+  color: var(--db-follow-ink);
+}
+.db-follow__inner {
+  max-width: 48rem;
+  margin-inline: auto;
+  padding: clamp(2rem, 5vh, 3rem) clamp(1.25rem, 4vw, 3rem) clamp(1.25rem, 3vh, 1.75rem);
+  text-align: center;
+}
+.db-follow__lede { margin: 0 0 0.9rem; font-size: 0.92rem; color: var(--db-follow-ink-soft); }
+.db-follow__title {
+  font-family: var(--pv-font);
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  line-height: 1.05;
+  text-wrap: balance;
+  font-size: clamp(1.35rem, 3.2vw, 2rem);
+  max-width: 20ch;
+  margin: 0 auto 1.1rem;
+}
+.db-follow__links { display: flex; gap: clamp(1rem, 3vw, 1.75rem); justify-content: center; flex-wrap: wrap; margin-top: 1.3rem; }
+.db-follow__social { display: flex; flex-direction: column; align-items: center; gap: 0.5rem; }
+.db-follow__social-label { font-size: 0.68rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--db-follow-ink-soft); }
+.db-follow-cta {
+  display: inline-block; font-weight: 700; font-size: 0.92rem; color: #fbf6ec;
+  background: var(--pv-rust); padding: 0.8rem 1.7rem; border-radius: 999px;
+  text-decoration: none; transition: transform 180ms cubic-bezier(0.23,1,0.32,1);
+}
+.db-follow-cta:hover { background: #c4380a; transform: translateY(-1px); }
+.db-follow-cta:active { transform: translateY(0); }
+.db-follow-cta:focus-visible { outline-color: var(--pv-orange); }
+
+.db-follow .db-foot {
+  border-top-color: color-mix(in srgb, var(--db-follow-ink) 16%, transparent);
+  color: var(--db-follow-ink-soft);
+}
+.db-follow .db-foot a { color: var(--pv-orange); }
 
 @media (max-width: 720px) {
   .db-entry { grid-template-columns: 1fr; }
@@ -435,5 +499,5 @@ a:focus-visible, button:focus-visible {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .db-pill, .db-home { transition: none; }
+  .db-pill, .db-row, .pv-nav-cta, .db-follow-cta { transition: none; }
 }
