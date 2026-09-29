@@ -152,32 +152,34 @@
     border-bottom: 1px solid color-mix(in srgb, var(--pv-dark) 12%, transparent);
   }
   .pv-mark { display: flex; align-items: center; gap: 0.6rem; color: var(--pv-dark); text-decoration: none; flex: none; }
-  .pv-mark__badge { width: 42px; height: 42px; flex: none; object-fit: contain; }
-  .pv-mark__word { font-weight: 900; font-size: 0.85rem; letter-spacing: 0.03em; text-transform: uppercase; }
+  .pv-mark__badge { width: 58px; height: 58px; flex: none; object-fit: contain; }
+  .pv-mark__word { font-weight: 900; font-size: 1.08rem; letter-spacing: 0.03em; text-transform: uppercase; color: var(--pv-rust); }
   .pv-mark:hover .pv-mark__word { color: var(--pv-rust-ink); }
   .pv-mark:active { opacity: 0.75; }
-  .pv-nav { display: flex; gap: clamp(0.9rem, 2vw, 1.6rem); margin-inline: auto; }
+  .pv-nav { display: flex; gap: clamp(1rem, 2.2vw, 2rem); margin-inline: auto; }
   /* hover/active colour changes are instant: only transform and opacity animate */
-  .pv-nav a { font-size: 0.82rem; font-weight: 500; color: var(--sc-ink-soft); text-decoration: none; padding: 0.3rem 0; border-bottom: 1px solid transparent; }
-  .pv-nav a:hover { color: var(--pv-dark); border-color: var(--pv-rust); }
+  .pv-nav a { font-size: 1rem; font-weight: 600; color: var(--pv-rust); text-decoration: none; padding: 0.3rem 0; border-bottom: 2px solid transparent; }
+  .pv-nav a:hover { color: var(--pv-rust-ink); border-color: var(--pv-rust); }
   .pv-nav a:active { color: var(--pv-rust-ink); }
   .pv-nav-cta {
-    font-size: 0.78rem; font-weight: 600; letter-spacing: 0.02em; flex: none; line-height: 1.2;
+    font-size: 0.92rem; font-weight: 600; letter-spacing: 0.02em; flex: none; line-height: 1.2;
     color: var(--pv-cream); background: var(--pv-rust); text-decoration: none;
-    padding: 0.5rem 1rem; border-radius: 999px; transition: transform 180ms;
+    padding: 0.65rem 1.25rem; border-radius: 999px; transition: transform 180ms;
   }
   .pv-nav-cta:hover { background: #8c2706; }
   .pv-nav-cta:active { transform: translateY(1px); }
-  @media (max-width: 760px) { .pv-nav { display: none; } }
+  /* the larger nav needs room: step it down on laptop-narrow screens before hiding it */
+@media (max-width: 1180px) { .pv-mark__badge { width: 50px; height: 50px; } .pv-mark__word { font-size: 0.95rem; } .pv-nav a { font-size: 0.9rem; } .pv-nav-cta { font-size: 0.85rem; padding: 0.55rem 1rem; } }
+@media (max-width: 960px) { .pv-nav { display: none; } }
   /* with the section nav hidden, badge + wordmark + CTA outgrow a 390px
      phone (the CTA was clipped at the right edge, worse at 360/375). Let
      the wordmark wrap to two lines and tighten the CTA instead. */
   @media (max-width: 480px) {
     .site-bar { gap: 0.75rem; }
     .pv-mark { flex: 0 1 auto; min-width: 0; gap: 0.5rem; }
-    .pv-mark__badge { width: 36px; height: 36px; }
-    .pv-mark__word { font-size: 0.74rem; line-height: 1.1; }
-    .pv-nav-cta { padding: 0.5rem 0.85rem; }
+    .pv-mark__badge { width: 44px; height: 44px; }
+    .pv-mark__word { font-size: 0.82rem; line-height: 1.1; }
+    .pv-nav-cta { font-size: 0.8rem; padding: 0.5rem 0.85rem; }
   }
 
   a:focus-visible, button:focus-visible { outline: 2px solid var(--pv-rust); outline-offset: 3px; }
