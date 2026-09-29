@@ -503,3 +503,11 @@ a:focus-visible, button:focus-visible {
 @media (prefers-reduced-motion: reduce) {
   .db-pill, .db-row, .pv-nav-cta, .db-follow-cta { transition: none; }
 }
+
+.db-inline-figure--portrait img {
+  width: auto;
+  max-width: 100%;
+  max-height: 34rem;
+  display: block;
+  margin: 0 auto;
+}
