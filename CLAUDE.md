@@ -27,7 +27,7 @@ You're working inside the **WAT framework** (Workflows, Agents, Tools). This arc
 
 ## What this is
 
-A single-page scroll-driven website for Peter van der Spuy (Gulfstream captain, Porsche racer, Camel Safari 911 builder, podcast host), built with the `nateherk-design:scroll-craft` plugin skill. It is a client mock-up being iterated from Peter's feedback. Not a git repo.
+A single-page scroll-driven website for Peter van der Spuy (Gulfstream captain, Porsche racer, Camel Safari 911 builder, podcast host), built with the `nateherk-design:scroll-craft` plugin skill. It is live at https://petervanderspuy.com and still iterated from Peter's feedback. Git repo, `main` branch, pushed to a public GitHub repo.
 
 **Always invoke the `frontend-design` skill before writing any frontend code.** Then work inside the scroll-craft skill's rules (`SKILL.md` and `references/` in the plugin cache) — they govern devices, cues, grammar, verification and the taste floor.
 
@@ -42,9 +42,11 @@ When dispatching a subagent (the `Agent` tool — Explore, general-purpose, Plan
 Before doing bulk subtask work directly or reaching for a Claude subagent,
 check the global `local-model-delegation` skill — it routes well-suited
 subtasks (no current info/tool access needed, answerable in one
-self-contained shot, cheap to verify at a glance) to a free local Ollama
-model instead (`qwen3.5:9b` general-purpose, `qwen2.5-coder:7b` coding;
-machine-wide install, already running at `localhost:11434`). For
+self-contained shot, cheap to verify at a glance) to a free local model
+instead: **Ternary Bonsai 2 27B** via
+`C:\Users\richa\.claude\skills\local-model-delegation\scripts\bonsai_query.py`
+(machine-wide, starts its own server; `--stop` when done to free the GPU),
+with no fallback (we no longer use Ollama; if Bonsai fails, do the subtask yourself). For
 multi-source research (scraping sites, pulling YouTube transcripts — e.g.
 the podcast channel referenced below) before a build/plan, use the
 `research-pipeline` skill instead — it handles the fetching and hands bulk
@@ -86,6 +88,22 @@ node $SKILL/scripts/shoot.mjs --url http://localhost:4500 --out lab/<name> --red
 **Python:** `python` resolves to the Windows Store stub. Use `C:/Users/richa/AppData/Local/Programs/Python/Python312/python.exe` from Bash, or `py -3` from PowerShell. PIL, numpy, onnxruntime are installed.
 
 **Environment limits (don't work around silently — say so):** no full ffmpeg build (contact sheets and video encoding unavailable); no `KIE_AI_API_KEY` (no generated imagery — the build is real-photo only); `rembg` is installed but crashes on import because Application Control blocks `llvmlite.dll` — use `.models/cutout.py` (standalone U2Net via onnxruntime) instead.
+
+## Deploying
+
+Production is **https://petervanderspuy.com** on Hostserv cPanel (Linux hosting, `public_html`). Pushing to GitHub does not update it: the push only redeploys the Vercel copy (https://peter-van-der-spuy-site.vercel.app/scrollcraft/builds/peter-van-der-spuy/), which is now a staging preview.
+
+```bash
+python tools/deploy_hostserv.py --dry-run   # what would upload
+python tools/deploy_hostserv.py             # upload files changed since last deploy (FTPS)
+python tools/deploy_hostserv.py --full      # re-upload everything
+```
+
+- Credentials live in `.env` at the project root (gitignored; the repo is public, so never commit them). The FTP account is rooted at `public_html`.
+- The script uploads the build folder's site files (`.htaccess`, `index.html`, engine, `robots.txt`, `sitemap.xml`, `assets/` minus `_originals`, `blog/` minus `.md`) and **never deletes** on the server. A removed or renamed file has to be deleted by hand in cPanel File Manager.
+- The build's `.htaccess` forces https and the bare domain, and sets gzip and caching. It deploys with the site; Vercel ignores it.
+- `public_html/_old_wordpress/` is Peter's retired WordPress site, blocked from the web by its own `.htaccess`. Leave it. Full backup (files + `peterva1_wp631.sql`) is in `../Peter Hosting/`.
+- After deploying, curl the live URL for a string from the change rather than trusting the upload.
 
 ## Screenshot workflow (visual self-review)
 

@@ -1,4 +1,4 @@
-[text](<../Peter W2/CLAUDE.md>)# Peter van der Spuy — Brand Identity Guide
+# Peter van der Spuy — Brand Identity Guide
 
 Master reference for Peter's brand identity — channel positioning, the logo,
 the visual/color system, brand voice, and an expanded adventure/outdoor

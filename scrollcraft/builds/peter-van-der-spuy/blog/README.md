@@ -3,6 +3,10 @@
 This blog is hand-authored static HTML. No build step, no CMS. Every post is
 one `.html` file that shares `blog.css` with the listing page.
 
+New episodes arrive through the podcast pipeline, which runs this same
+process on a branch and publishes at the episode's release time: see
+`PODCAST_PIPELINE.md`.
+
 ## Process, episode to post
 
 1. **Fetch the transcript.** Use the `youtube-transcript` skill on the
@@ -42,3 +46,7 @@ one `.html` file that shares `blog.css` with the listing page.
    $SKILL/scripts/serve.mjs --root . --port 4500 &` from the build folder,
    then `node screenshot.mjs http://localhost:4500/blog/<slug>.html <label>`
    from the project root, desktop and mobile.
+9. **Publish.** Commit and push to `main` (updates the Vercel staging copy),
+   then run `python tools/deploy_hostserv.py` from the project root to put
+   it on petervanderspuy.com. Check
+   `https://petervanderspuy.com/blog/<slug>.html` returns the new post.
