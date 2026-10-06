@@ -91,7 +91,9 @@ node $SKILL/scripts/shoot.mjs --url http://localhost:4500 --out lab/<name> --red
 
 ## Deploying
 
-Production is **https://petervanderspuy.com** on Hostserv cPanel (Linux hosting, `public_html`). Pushing to GitHub does not update it: the push only redeploys the Vercel copy (https://peter-van-der-spuy-site.vercel.app/scrollcraft/builds/peter-van-der-spuy/), which is now a staging preview.
+Production is **https://petervanderspuy.com** on Hostserv cPanel (Linux hosting, `public_html`). Pushing to GitHub does not update it: the push only redeploys the Vercel copy (https://peter-van-der-spuy-site.vercel.app/scrollcraft/builds/peter-van-der-spuy/), which is the **review** site.
+
+**Workflow: review first, live second.** Push changes to `main` so they appear on Vercel for review. Only run `deploy_hostserv.py` when Richard approves that change for the live site, never as part of making the change.
 
 ```bash
 python tools/deploy_hostserv.py --dry-run   # what would upload
